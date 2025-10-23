@@ -1,27 +1,36 @@
-# 產品概述
+# Product Overview
 
 ## 水精靈養成記 (Waterlog)
 
-一個遊戲化的飲水追蹤應用程式，透過角色進化和成就系統幫助使用者養成健康的飲水習慣。
+A gamified water intake tracking web application that makes hydration fun and engaging.
 
-## 核心功能
+### Core Concept
 
-- **飲水追蹤**: 快速添加按鈕（250ml、500ml、100ml）和自訂水量輸入，可選擇指定時間
-- **遊戲化機制**: 經驗值系統、等級進化（1-5級）、角色從小水滴進化到水之王
-- **成就系統**: 可解鎖的成就里程碑（第一次喝水、每日目標、累計飲水量、等級進化、連續達標）
-- **進度視覺化**: 每日目標追蹤，動態進度條和即時統計
-- **數據管理**: 匯出/匯入功能、備份/還原能力
-- **新手導覽**: 首次使用者的互動式教學系統
-- **無障礙功能**: 完整鍵盤導航、ARIA 標籤、螢幕閱讀器支援、跳過連結
+Transform daily water drinking into an interactive game where users:
+- Track water consumption throughout the day
+- Earn experience points (EXP) for each drink
+- Level up their water sprite character (from seedling to water king)
+- Unlock achievements and maintain streaks
+- View detailed statistics and progress
 
-## 使用者體驗
+### Key Features
 
-- **語言**: 繁體中文（zh-TW）
-- **主題**: 淺色/深色模式，支援自動偵測
-- **響應式設計**: 行動優先設計，桌面最佳化
-- **離線功能**: 基於 LocalStorage 的數據持久化
-- **通知提醒**: 可選的瀏覽器通知，用於飲水提醒（最多 8 個排程時間）
+- **Gamification**: Character evolution system with 5 levels (小水滴 → 水苗 → 水精靈 → 水龍 → 水之王)
+- **Quick Actions**: Preset buttons for common drink sizes (250ml, 500ml, 100ml)
+- **Custom Recording**: Manual entry with custom amounts and timestamps
+- **Progress Tracking**: Daily goal visualization with progress bars
+- **Achievement System**: Unlock badges for milestones and consistent habits
+- **Statistics Dashboard**: Today/week/month views with charts and insights
+- **Onboarding**: Interactive tutorial for new users
+- **Settings**: Customizable daily goals, quick buttons, notifications, and themes
+- **Supabase Integration**: Optional cloud sync for multi-device access
+- **Offline-First**: Works without internet, syncs when online
+- **Accessibility**: Full keyboard navigation, ARIA labels, screen reader support
 
-## 目標受眾
+### Target Audience
 
-希望透過有趣的遊戲化機制改善每日飲水量的使用者，並提供完整的無障礙支援。
+Health-conscious individuals who want to build better hydration habits through engaging, game-like interactions.
+
+### Language
+
+Primary language is Traditional Chinese (zh-TW) with potential for internationalization.

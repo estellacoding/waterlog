@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase 整合測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background: #0984e3;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0770c9;
+        }
+        .status {
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            background: #e8f4f8;
+        }
+        .error {
+            background: #ffe8e8;
+            color: #c00;
+        }
+        .success {
+            background: #e8f8e8;
+            color: #0a0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Supabase 整合測試</h1>
+
+    <div class="test-section">
+        <h2>1. 初始化測試</h2>
+        <button onclick="testInitialization()">測試初始化</button>
+        <div id="init-status" class="status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 認證測試</h2>
+        <button onclick="showAuthPanel()">開啟登入面板</button>
+        <button onclick="testAuthStatus()">檢查登入狀態</button>
+        <div id="auth-status" class="status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 數據同步測試</h2>
+        <button onclick="testAddWaterRecord()">測試新增飲水記錄</button>
+        <button onclick="testLoadUserData()">測試載入使用者數據</button>
+        <div id="sync-status" class="status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. 離線佇列測試</h2>
+        <button onclick="testSyncQueue()">檢查同步佇列</button>
+        <button onclick="testManualSync()">手動同步</button>
+        <div id="queue-status" class="status"></div>
+    </div>
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Supabase 配置與客戶端 -->
+    <script src="supabase/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth-ui.js"></script>
+
+    <script>
+        // 測試腳本
+        async function testInitialization() {
+            const status = document.getElementById('init-status');
+            status.className = 'status';
+            status.textContent = '正在初始化...';
+
+            try {
+                const result = await supabaseClient.initialize();
+                if (result) {
+                    status.className = 'status success';
+                    status.textContent = '✅ 初始化成功！';
+                } else {
+                    status.className = 'status error';
+                    status.textContent = '❌ 初始化失敗';
+                }
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = '❌ 錯誤: ' + error.message;
+            }
+        }
+
+        function testAuthStatus() {
+            const status = document.getElementById('auth-status');
+            const isAuth = supabaseClient.isAuthenticated();
+            const user = supabaseClient.getCurrentUser();
+
+            if (isAuth && user) {
+                status.className = 'status success';
+                status.innerHTML = `✅ 已登入<br>使用者: ${user.email}`;
+            } else {
+                status.className = 'status';
+                status.textContent = 'ℹ️ 未登入';
+            }
+        }
+
+        async function testAddWaterRecord() {
+            const status = document.getElementById('sync-status');
+            
+            if (!supabaseClient.isAuthenticated()) {
+                status.className = 'status error';
+                status.textContent = '❌ 請先登入';
+                return;
+            }
+
+            status.className = 'status';
+            status.textContent = '正在新增記錄...';
+
+            try {
+                const result = await supabaseClient.addWaterRecord({
+                    amount: 250,
+                    recorded_at: new Date().toISOString()
+                });
+
+                if (result.success) {
+                    status.className = 'status success';
+                    status.textContent = result.queued 
+                        ? '✅ 記錄已加入佇列（離線模式）' 
+                        : '✅ 記錄新增成功！';
+                } else {
+                    status.className = 'status error';
+                    status.textContent = '❌ 新增失敗: ' + result.error;
+                }
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = '❌ 錯誤: ' + error.message;
+            }
+        }
+
+        async function testLoadUserData() {
+            const status = document.getElementById('sync-status');
+            
+            if (!supabaseClient.isAuthenticated()) {
+                status.className = 'status error';
+                status.textContent = '❌ 請先登入';
+                return;
+            }
+
+            status.className = 'status';
+            status.textContent = '正在載入數據...';
+
+            try {
+                const data = await supabaseClient.loadUserData();
+                
+                if (data) {
+                    status.className = 'status success';
+                    status.innerHTML = `✅ 數據載入成功！<br>
+                        等級: ${data.progress?.level || 'N/A'}<br>
+                        今日記錄: ${data.todayRecords?.length || 0} 筆<br>
+                        成就: ${data.achievements?.length || 0} 個`;
+                } else {
+                    status.className = 'status';
+                    status.textContent = 'ℹ️ 無雲端數據';
+                }
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = '❌ 錯誤: ' + error.message;
+            }
+        }
+
+        function testSyncQueue() {
+            const status = document.getElementById('queue-status');
+            const queueLength = supabaseClient.syncQueue.length;
+
+            status.className = 'status';
+            status.innerHTML = `ℹ️ 同步佇列中有 ${queueLength} 筆待處理項目<br>
+                線上狀態: ${supabaseClient.isOnline ? '✅ 在線' : '❌ 離線'}`;
+        }
+
+        async function testManualSync() {
+            const status = document.getElementById('queue-status');
+            
+            if (!supabaseClient.isAuthenticated()) {
+                status.className = 'status error';
+                status.textContent = '❌ 請先登入';
+                return;
+            }
+
+            status.className = 'status';
+            status.textContent = '正在同步...';
+
+            try {
+                await supabaseClient.syncPendingChanges();
+                status.className = 'status success';
+                status.textContent = '✅ 同步完成！剩餘: ' + supabaseClient.syncQueue.length + ' 筆';
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = '❌ 同步失敗: ' + error.message;
+            }
+        }
+
+        // 自動初始化
+        window.addEventListener('DOMContentLoaded', async () => {
+            await testInitialization();
+            testAuthStatus();
+        });
+    </script>
+</body>
+</html>

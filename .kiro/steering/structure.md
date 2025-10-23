@@ -1,103 +1,197 @@
-# 專案結構
+# Project Structure & Conventions
 
-## 目錄配置
+## File Organization
 
 ```
 waterlog/
-├── index.html              # 主要應用程式入口
-├── script.js               # 所有 JavaScript 邏輯
-├── style.css               # 所有樣式和動畫
-├── README.md               # 專案文件
-├── LICENSE                 # MIT 授權
-├── .kiro/                  # Kiro AI 助理配置
-│   └── steering/           # AI 指導文件
-├── .vscode/                # VS Code 工作區設定
-└── tests/                  # 測試套件
+├── index.html              # Main entry point with semantic HTML
+├── script.js               # Monolithic app logic (~6000+ lines)
+├── style.css               # Global styles with CSS variables
+├── waterlog.txt            # Project requirements/notes
+├── LICENSE
+├── README.md
+│
+├── js/                     # JavaScript modules
+│   ├── supabase-client.js  # Supabase client wrapper
+│   └── auth-ui.js          # Authentication UI components
+│
+├── supabase/               # Backend configuration
+│   ├── config.js           # Credentials (gitignored)
+│   ├── config.example.js   # Template for config
+│   ├── schema.sql          # PostgreSQL schema
+│   └── README.md           # Setup guide
+│
+└── tests/                  # Browser-based tests
     ├── test-unit.html
     ├── test-integration.html
     ├── test-accessibility.html
     ├── test-dashboard.html
     ├── test-export.html
     ├── test-performance-offline.html
+    ├── test-supabase.html
     └── TESTING.md
 ```
 
-## 程式碼組織
+## Code Organization in script.js
 
-### script.js 結構（6127 行）
+The main `script.js` file follows a structured layout with clear section markers:
 
-**常數與定義**（檔案頂部）：
-- `ACHIEVEMENT_DEFINITIONS` - 成就配置
-- `CHARACTER_STAGES` - 角色進化階段
-- `DEFAULT_GAME_DATA` - 初始遊戲狀態
-- `DEFAULT_SETTINGS` - 預設使用者偏好
+1. **Constants** (`// ==== 常數定義 ====`)
+   - `ACHIEVEMENT_DEFINITIONS`
+   - `CHARACTER_STAGES`
+   - `DEFAULT_GAME_DATA`
+   - `DEFAULT_SETTINGS`
 
-**核心類別**（依序）：
-1. `LocalStorageManager` - 數據持久化層
-2. `AppStateManager` - 狀態管理和事件系統
-3. `OnboardingSystem` - 教學流程
-4. `SettingsPanel` - 使用者配置 UI
-5. 其他系統（通知、主題、儀表板、匯出）
+2. **Core Classes** (in order)
+   - `LocalStorageManager` - Data persistence layer
+   - `AppStateManager` - State management
+   - `OnboardingSystem` - Tutorial system
+   - `SettingsPanel` - Settings UI
+   - `NotificationSystem` - Browser notifications
+   - `ThemeSystem` - Theme switching
+   - `DashboardSystem` - Statistics/charts
+   - `ExportSystem` - Data export/import
 
-**全域函式**：
-- `addWater()` - 主要使用者操作
-- `showCelebration()` - UI 回饋
-- `updateUI()` - 渲染狀態變更
-- 初始化和事件處理器
+3. **Global Functions**
+   - `addWater(amount)` - Core water tracking
+   - `updateUI()` - UI refresh
+   - `showCelebration(message)` - Animations
+   - `initializeApp()` - App bootstrap
 
-### style.css 結構（1750 行）
+4. **Event Listeners & Initialization**
+   - DOM ready handlers
+   - Global event bindings
 
-**組織方式**：
-1. 重置和基礎樣式
-2. 無障礙工具（`.sr-only`、焦點指示器）
-3. CSS 自訂屬性（`:root` 變數）
-4. 深色主題覆寫
-5. 元件樣式（header、character、stats、achievements、history）
-6. 動畫關鍵影格
-7. 響應式媒體查詢
-8. 無障礙增強
+## Naming Conventions
 
-### HTML 結構
+### JavaScript
 
-**語義化區塊**：
-- `<header>` - 標題、等級資訊、導航
-- `<main>` - 主要內容區域
-  - 角色區塊
-  - 統計區塊（進度、快速操作、自訂輸入）
-  - 成就區塊
-  - 歷史記錄區塊
-- 模態覆蓋層（慶祝、導覽、設定、儀表板、匯出）
+- **Classes**: PascalCase (e.g., `LocalStorageManager`, `AppStateManager`)
+- **Functions**: camelCase (e.g., `addWater`, `updateUI`, `showCelebration`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `DEFAULT_GAME_DATA`, `CHARACTER_STAGES`)
+- **Variables**: camelCase (e.g., `gameData`, `currentUser`, `isOnline`)
+- **Private methods**: Prefix with underscore (convention, not enforced)
 
-**無障礙功能**：
-- 跳過導航連結
-- ARIA 地標（`role="banner"`、`role="main"`）
-- ARIA 即時區域用於動態更新
-- 完整的 ARIA 標籤和描述
+### CSS
 
-## 測試結構
+- **Classes**: kebab-case (e.g., `.drink-btn`, `.progress-bar`, `.custom-input-card`)
+- **IDs**: camelCase (e.g., `#dailyProgress`, `#expFill`, `#customAmount`)
+- **CSS Variables**: kebab-case with `--` prefix (e.g., `--bg-gradient-start`, `--card-shadow`)
 
-**測試類型**：
-- **單元測試**: 核心邏輯驗證（LocalStorage、計算、日期處理）
-- **整合測試**: 元件互動和數據流
-- **無障礙測試**: 鍵盤導航、ARIA、螢幕閱讀器支援
-- **儀表板測試**: 圖表渲染和統計
-- **匯出測試**: 數據匯出/匯入功能
-- **效能測試**: 載入時間、離線能力
+### HTML
 
-## 慣例
+- **IDs**: camelCase for JavaScript targets (e.g., `id="todayAmount"`)
+- **Classes**: kebab-case for styling (e.g., `class="quick-buttons"`)
+- **ARIA labels**: Traditional Chinese with clear descriptions
 
-### 命名規則
-- 類別: PascalCase（`LocalStorageManager`）
-- 函式: camelCase（`addWater`、`showCelebration`）
-- 常數: UPPER_SNAKE_CASE（`DEFAULT_GAME_DATA`）
-- CSS 類別: kebab-case（`.drink-btn`、`.custom-input-card`）
+## Code Style Guidelines
 
-### 註解
-- 區塊標題使用 `// ==================== 區塊名稱 ====================`
-- JSDoc 風格的函式文件，包含 `@param` 和 `@returns`
-- 複雜邏輯的行內註解
+### JavaScript
 
-### 檔案組織
-- 單檔案架構（無模組）
-- 依功能邏輯分組
-- 檔案內清楚的關注點分離
+- Use ES6+ features (classes, arrow functions, template literals, destructuring)
+- Prefer `const` over `let`, avoid `var`
+- Use JSDoc-style comments for class methods
+- Section headers use `// ==== Section Name ====` format
+- Error handling with try-catch blocks
+- Validate all user inputs
+- Always check for null/undefined before DOM manipulation
+
+### HTML
+
+- Semantic HTML5 elements (`<header>`, `<main>`, `<section>`, `<nav>`)
+- ARIA attributes for accessibility (`role`, `aria-label`, `aria-live`)
+- Skip links for keyboard navigation
+- Proper heading hierarchy (h1 → h2 → h3)
+- Form labels associated with inputs
+
+### CSS
+
+- CSS custom properties for theming
+- Mobile-first responsive design
+- Animations with `@keyframes`
+- Focus-visible for keyboard navigation
+- Dark theme support via `.dark-theme` class
+- Consistent spacing using CSS variables
+
+## Data Flow
+
+1. **User Action** → Button click or input
+2. **Function Call** → `addWater()`, `updateSettings()`, etc.
+3. **State Update** → `AppStateManager.updateGameData()`
+4. **Persistence** → `LocalStorageManager.saveGameData()`
+5. **Event Notification** → Listeners triggered (`dataChange`, `levelUp`, etc.)
+6. **UI Update** → DOM manipulation to reflect new state
+7. **Optional Sync** → `SupabaseClient` syncs to cloud if authenticated
+
+## Storage Keys
+
+### LocalStorage
+
+- `waterGameData` - Main game state
+- `lastPlayDate` - Last active date for daily reset
+- `appSettings` - User preferences
+- `onboardingCompleted` - Tutorial completion flag
+- `waterHistory_{date}` - Historical daily totals
+
+### Supabase Tables
+
+- `user_settings` - User preferences
+- `user_progress` - Level and EXP
+- `water_records` - Individual drink records
+- `achievements` - Unlocked achievements
+- `daily_stats` - Aggregated daily data
+
+## Testing Approach
+
+- **No test framework** - Custom HTML test pages
+- **Manual execution** - Open in browser, click buttons
+- **Visual feedback** - Green ✓ for pass, Red ✗ for fail
+- **Test categories**: Unit, Integration, Accessibility, Performance, Supabase
+- **Browser testing** - Test in Chrome, Firefox, Safari, Edge
+
+## Accessibility Patterns
+
+- `.sr-only` class for screen reader only content
+- `aria-live` regions for dynamic updates
+- `role` attributes for semantic meaning
+- Focus management in modals/overlays
+- Keyboard shortcuts documented
+- Skip links at page top
+- High contrast focus indicators
+
+## Common Patterns
+
+### Creating Modals/Overlays
+
+```javascript
+const overlay = document.createElement('div');
+overlay.style.cssText = `position: fixed; ...`;
+const content = document.createElement('div');
+content.innerHTML = `...`;
+overlay.appendChild(content);
+document.body.appendChild(overlay);
+```
+
+### Event Listeners
+
+```javascript
+appState.addEventListener('levelUp', (data) => {
+    showCelebration(`🎉 升級到 Lv.${data.level}！`);
+});
+```
+
+### Data Validation
+
+```javascript
+if (amount < 1 || amount > 1000) {
+    throw new Error('水量必須在 1-1000ml 之間');
+}
+```
+
+## Language & Localization
+
+- **Primary**: Traditional Chinese (zh-TW)
+- **UI Text**: Hardcoded in HTML/JS (no i18n framework)
+- **Comments**: Mix of English and Chinese
+- **Variable names**: English
+- **User-facing strings**: Traditional Chinese

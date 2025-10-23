@@ -1,91 +1,120 @@
-# 技術架構
+# Technology Stack
 
-## 架構類型
+## Architecture
 
-**類型**: 靜態網頁應用程式（無需建置系統）
+**Type**: Vanilla JavaScript SPA (Single Page Application)  
+**Pattern**: Class-based architecture with state management  
+**Storage**: LocalStorage (primary) + Supabase (optional cloud sync)
 
-**核心技術**:
-- 原生 JavaScript (ES6+)
-- HTML5 語義化標記
-- CSS3 自訂屬性（變數）
+## Core Technologies
 
-## 主要函式庫與 API
+- **HTML5**: Semantic markup with ARIA attributes for accessibility
+- **CSS3**: Custom properties (CSS variables), animations, responsive design
+- **Vanilla JavaScript (ES6+)**: No framework dependencies for core functionality
+- **Supabase**: Optional backend for authentication and cloud sync
+  - SDK: `@supabase/supabase-js@2` (loaded via CDN)
 
-- **LocalStorage API**: 數據持久化和狀態管理
-- **Notification API**: 可選的飲水提醒
-- **Canvas API**: 用於儀表板的數據視覺化
+## Key Libraries
 
-## 檔案結構
+- **Supabase JS SDK**: Cloud database and authentication (optional feature)
+- **No build tools**: Direct browser execution, no bundler required
 
-- `index.html` - 主要應用程式入口
-- `script.js` - 所有應用程式邏輯（6127 行）
-- `style.css` - 所有樣式包含動畫（1750 行）
-- `tests/` - 測試套件（單元、整合、無障礙、效能）
+## Code Architecture
 
-## JavaScript 架構
+### Class Structure
 
-### 類別化元件
+- `LocalStorageManager`: Data persistence and validation
+- `AppStateManager`: Application state and event system
+- `OnboardingSystem`: New user tutorial flow
+- `SettingsPanel`: User preferences management
+- `SupabaseClient`: Cloud sync and authentication (optional)
+- `NotificationSystem`: Browser notifications
+- `ThemeSystem`: Light/dark mode management
+- `DashboardSystem`: Statistics and charts
 
-- `LocalStorageManager` - 數據驗證、儲存和讀取
-- `AppStateManager` - 應用程式狀態和事件管理
-- `OnboardingSystem` - 首次使用者教學流程
-- `SettingsPanel` - 使用者偏好設定和配置
-- 其他系統：通知、主題、儀表板、匯出
+### Data Models
 
-### 數據模型
+- `DEFAULT_GAME_DATA`: Level, exp, water amounts, history, achievements
+- `DEFAULT_SETTINGS`: Daily goals, quick buttons, notifications, theme
+- `ACHIEVEMENT_DEFINITIONS`: Achievement metadata
+- `CHARACTER_STAGES`: Character evolution stages
 
-```javascript
-{
-  level: number,
-  exp: number,
-  maxExp: number,
-  todayAmount: number,
-  dailyGoal: number,
-  totalAmount: number,
-  history: Array,
-  achievements: Array,
-  metadata: { version, createdAt, lastUpdated }
-}
+### State Management
+
+- Event-driven architecture with listeners for: `dataChange`, `levelUp`, `achievementUnlock`, `dailyGoalComplete`
+- Centralized state in `AppStateManager`
+- Automatic persistence to LocalStorage
+
+## File Structure
+
+```
+/
+├── index.html              # Main application entry
+├── script.js               # Core application logic (~6000+ lines)
+├── style.css               # Styles with CSS variables
+├── js/
+│   ├── supabase-client.js  # Supabase integration
+│   └── auth-ui.js          # Authentication UI
+├── supabase/
+│   ├── config.js           # Supabase credentials (gitignored)
+│   ├── config.example.js   # Config template
+│   ├── schema.sql          # Database schema
+│   └── README.md           # Setup instructions
+└── tests/
+    ├── test-unit.html      # Unit tests
+    ├── test-integration.html
+    ├── test-accessibility.html
+    ├── test-dashboard.html
+    ├── test-export.html
+    ├── test-performance-offline.html
+    ├── test-supabase.html
+    └── TESTING.md
 ```
 
-## 樣式方法
+## Development Workflow
 
-- **CSS 變數**: 主題感知的設計標記
-- **響應式**: 行動優先的媒體查詢
-- **動畫**: 大量使用 CSS 關鍵影格動畫
-- **無障礙**: 焦點指示器、高對比度支援、減少動畫支援
+### Running Locally
 
-## 常用指令
-
-### 開發
+No build step required. Open `index.html` directly in browser or use a local server:
 
 ```bash
-# 本地伺服器（擇一使用）
+# Python
 python -m http.server 8000
+
+# Node.js
 npx serve .
+
+# PHP
 php -S localhost:8000
 ```
 
-### 測試
+### Testing
 
-直接在瀏覽器中開啟測試檔案：
-- `tests/test-unit.html` - 單元測試
-- `tests/test-integration.html` - 整合測試
-- `tests/test-accessibility.html` - 無障礙測試
-- `tests/test-performance-offline.html` - 效能測試
+Open test files directly in browser:
+- Unit tests: `tests/test-unit.html`
+- Integration tests: `tests/test-integration.html`
+- Accessibility: `tests/test-accessibility.html`
 
-或透過本地伺服器導航至測試 URL。
+No test runner needed - tests execute in browser with custom test framework.
 
-## 瀏覽器支援
+### Supabase Setup (Optional)
 
-- 支援 ES6+ 的現代瀏覽器
-- 需要 LocalStorage API
-- Notification API 為可選
-- 不支援功能的優雅降級
+1. Create Supabase project at https://supabase.com
+2. Run `supabase/schema.sql` in SQL Editor
+3. Copy `supabase/config.example.js` to `supabase/config.js`
+4. Add Project URL and anon key to config
 
-## 效能考量
+## Browser Support
 
-- 無外部依賴或建置流程
-- 所有資源內嵌或本地
-- 高效的 LocalStorage 使用與驗證
-- 優化的動畫，支援 `prefers-reduced-motion`
+- Modern browsers with ES6+ support
+- LocalStorage API required
+- Optional: Notification API, Service Workers
+
+## Accessibility Standards
+
+- WCAG 2.1 Level AA compliance
+- Full keyboard navigation
+- ARIA labels and roles
+- Screen reader tested
+- Focus management
+- Skip links for navigation

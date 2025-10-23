@@ -6,7 +6,7 @@ class SupabaseClient {
         this.currentUser = null;
         this.isOnline = navigator.onLine;
         this.syncQueue = [];
-        
+
         // 監聽網路狀態
         window.addEventListener('online', () => this.handleOnline());
         window.addEventListener('offline', () => this.handleOffline());
@@ -43,7 +43,7 @@ class SupabaseClient {
             this.client.auth.onAuthStateChange((event, session) => {
                 console.log('認證狀態變更:', event);
                 this.currentUser = session?.user || null;
-                
+
                 if (event === 'SIGNED_IN') {
                     this.onSignIn();
                 } else if (event === 'SIGNED_OUT') {
@@ -116,6 +116,32 @@ class SupabaseClient {
     }
 
     /**
+     * Google OAuth 登入
+     */
+    async signInWithGoogle() {
+        try {
+            const { error } = await this.client.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin,
+                    queryParams: {
+                        access_type: 'offline',
+                        prompt: 'consent'
+                    }
+                }
+            });
+
+            if (error) throw error;
+
+            console.log('Google 登入流程已啟動');
+            return { success: true };
+        } catch (error) {
+            console.error('Google 登入失敗:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    /**
      * 使用者登出
      */
     async signOut() {
@@ -136,7 +162,7 @@ class SupabaseClient {
      */
     async signInWithMagicLink(email) {
         try {
-            const { data, error } = await this.client.auth.signInWithOtp({
+            const { error } = await this.client.auth.signInWithOtp({
                 email,
                 options: {
                     emailRedirectTo: window.location.origin
@@ -158,16 +184,21 @@ class SupabaseClient {
      */
     async onSignIn() {
         console.log('使用者登入，開始同步數據...');
-        
+
         // 從雲端載入數據
         await this.loadUserData();
-        
+
         // 同步本地佇列
         await this.syncPendingChanges();
-        
+
         // 觸發 UI 更新
         if (typeof updateUI === 'function') {
             updateUI();
+        }
+
+        // 顯示歡迎訊息
+        if (typeof showCelebration === 'function') {
+            showCelebration('🎉 登入成功！數據已同步');
         }
     }
 
@@ -175,13 +206,52 @@ class SupabaseClient {
      * 登出後的處理
      */
     onSignOut() {
-        console.log('使用者登出');
+        console.log('使用者登出，清空雲端資料');
         this.currentUser = null;
-        
-        // 清除敏感數據但保留本地快取
+
+        // 清空所有本地資料
+        this.clearLocalData();
+
+        // 清空同步佇列
+        this.syncQueue = [];
+        this.saveSyncQueue();
+
+        // 重置應用狀態（重新初始化為預設值）
+        if (typeof appState !== 'undefined' && appState) {
+            appState.gameData = appState.storageManager.createDefaultGameData();
+            appState.saveState();
+        }
+
         // 觸發 UI 更新
         if (typeof updateUI === 'function') {
             updateUI();
+        }
+
+        // 顯示提示訊息
+        if (typeof showCelebration === 'function') {
+            showCelebration('👋 已登出，現在使用本地模式');
+        }
+    }
+
+    /**
+     * 清空本地資料
+     */
+    clearLocalData() {
+        try {
+            // 清除遊戲數據
+            localStorage.removeItem('waterGameData');
+            localStorage.removeItem('lastPlayDate');
+            localStorage.removeItem('appSettings');
+
+            // 重置應用程式狀態
+            if (typeof appState !== 'undefined' && appState) {
+                appState.gameData = appState.storageManager.createDefaultGameData();
+                appState.saveState();
+            }
+
+            console.log('本地資料已清空');
+        } catch (error) {
+            console.error('清空本地資料失敗:', error);
         }
     }
 
@@ -254,7 +324,7 @@ class SupabaseClient {
     async handleOnline() {
         console.log('網路已連線');
         this.isOnline = true;
-        
+
         if (this.isAuthenticated()) {
             await this.syncPendingChanges();
         }
@@ -280,7 +350,7 @@ class SupabaseClient {
 
         while (this.syncQueue.length > 0) {
             const change = this.syncQueue[0];
-            
+
             try {
                 await this.executeChange(change);
                 this.syncQueue.shift(); // 成功後移除
@@ -319,9 +389,9 @@ class SupabaseClient {
             data,
             timestamp: new Date().toISOString()
         });
-        
+
         this.saveSyncQueue();
-        
+
         // 如果在線上，立即嘗試同步
         if (this.isOnline && this.isAuthenticated()) {
             this.syncPendingChanges();
@@ -379,13 +449,13 @@ class SupabaseClient {
             return { success: true, data };
         } catch (error) {
             console.error('新增飲水記錄失敗:', error);
-            
+
             // 如果是網路錯誤，加入佇列
             if (!this.isOnline) {
                 this.queueChange('water_record', recordData);
                 return { success: true, queued: true };
             }
-            
+
             return { success: false, error: error.message };
         }
     }
@@ -415,12 +485,12 @@ class SupabaseClient {
             return { success: true, data };
         } catch (error) {
             console.error('更新進度失敗:', error);
-            
+
             if (!this.isOnline) {
                 this.queueChange('progress_update', progressData);
                 return { success: true, queued: true };
             }
-            
+
             return { success: false, error: error.message };
         }
     }
@@ -456,12 +526,12 @@ class SupabaseClient {
             return { success: true, data };
         } catch (error) {
             console.error('解鎖成就失敗:', error);
-            
+
             if (!this.isOnline) {
                 this.queueChange('achievement_unlock', { achievement_id: achievementId });
                 return { success: true, queued: true };
             }
-            
+
             return { success: false, error: error.message };
         }
     }

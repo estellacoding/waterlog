@@ -101,7 +101,7 @@ class LocalStorageManager {
     loadGameData() {
         try {
             const saved = localStorage.getItem(this.storageKeys.gameData);
-            
+
             if (!saved) {
                 return this.createDefaultGameData();
             }
@@ -125,14 +125,14 @@ class LocalStorageManager {
     saveGameData(data) {
         try {
             this.validateGameData(data);
-            
+
             // 更新元數據
             data.metadata = data.metadata || {};
             data.metadata.lastUpdated = new Date().toISOString();
-            
+
             const jsonString = JSON.stringify(data);
             localStorage.setItem(this.storageKeys.gameData, jsonString);
-            
+
             return true;
 
         } catch (error) {
@@ -275,7 +275,7 @@ class AppStateManager {
             } catch (error) {
                 console.error('儲存歷史數據失敗:', error);
             }
-            
+
             // 新的一天，重置每日數據
             this.gameData.todayAmount = 0;
             this.gameData.history = [];
@@ -500,7 +500,7 @@ class OnboardingSystem {
 
                 // 添加高亮類別
                 element.classList.add('onboarding-highlight');
-                
+
                 // 滾動到元素
                 setTimeout(() => {
                     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1079,7 +1079,7 @@ class SettingsPanel {
             btn.style.borderColor = '#ddd';
         });
 
-        const activeBtn = Array.from(buttons).find(btn => 
+        const activeBtn = Array.from(buttons).find(btn =>
             btn.textContent.includes(theme === 'light' ? '淺色' : theme === 'dark' ? '深色' : '自動')
         );
         if (activeBtn) {
@@ -1255,7 +1255,7 @@ class NotificationSystem {
                 if (currentTime === timeString) {
                     // 檢查是否已在這一分鐘內發送過通知
                     const notifKey = `${timeString}_${now.toDateString()}`;
-                    
+
                     if (!this.lastNotificationTime[notifKey]) {
                         this.sendWaterReminder();
                         this.lastNotificationTime[notifKey] = true;
@@ -1548,7 +1548,7 @@ class DashboardSystem {
      */
     renderCurrentView() {
         const stats = this.getStats(this.currentView);
-        
+
         switch (this.currentView) {
             case 'daily':
                 this.renderDailyView(stats);
@@ -1567,20 +1567,20 @@ class DashboardSystem {
      */
     getStats(period) {
         const now = Date.now();
-        
+
         // 檢查快取是否有效
-        if (this.cache[period] && this.cache.lastUpdate && 
+        if (this.cache[period] && this.cache.lastUpdate &&
             (now - this.cache.lastUpdate) < this.cacheTimeout) {
             return this.cache[period];
         }
 
         // 計算新的統計數據
         const stats = this.calculateStats(period);
-        
+
         // 更新快取
         this.cache[period] = stats;
         this.cache.lastUpdate = now;
-        
+
         return stats;
     }
 
@@ -1589,7 +1589,7 @@ class DashboardSystem {
      */
     calculateStats(period) {
         const gameData = this.appState.getGameData();
-        
+
         switch (period) {
             case 'daily':
                 return this.calculateDailyStats(gameData);
@@ -1607,7 +1607,7 @@ class DashboardSystem {
      */
     calculateDailyStats(gameData) {
         const today = new Date().toDateString();
-        
+
         return {
             date: today,
             totalAmount: gameData.todayAmount,
@@ -1616,8 +1616,8 @@ class DashboardSystem {
             goalAchieved: gameData.todayAmount >= gameData.dailyGoal,
             entries: gameData.history || [],
             entryCount: (gameData.history || []).length,
-            averagePerEntry: (gameData.history || []).length > 0 
-                ? Math.round(gameData.todayAmount / gameData.history.length) 
+            averagePerEntry: (gameData.history || []).length > 0
+                ? Math.round(gameData.todayAmount / gameData.history.length)
                 : 0,
             remainingAmount: Math.max(0, gameData.dailyGoal - gameData.todayAmount)
         };
@@ -1632,18 +1632,18 @@ class DashboardSystem {
         const today = new Date();
         const dayOfWeek = today.getDay(); // 0=週日, 1=週一, ...
         const daysInWeek = dayOfWeek === 0 ? 7 : dayOfWeek; // 週日算作第7天
-        
+
         // 計算本週總量和平均值
         const weekTotal = weekData.reduce((sum, day) => sum + day.amount, 0);
         const weekAverage = daysInWeek > 0 ? Math.round(weekTotal / daysInWeek) : 0;
-        
+
         // 計算達標天數
         const goalsAchieved = weekData.filter(day => day.amount >= gameData.dailyGoal).length;
         const goalRate = daysInWeek > 0 ? Math.round((goalsAchieved / daysInWeek) * 100) : 0;
-        
+
         // 計算趨勢（與上週比較）
         const trend = this.calculateTrend(weekData);
-        
+
         return {
             weekData: weekData,
             totalAmount: weekTotal,
@@ -1665,21 +1665,21 @@ class DashboardSystem {
         const monthData = this.getMonthData();
         const today = new Date();
         const dayOfMonth = today.getDate();
-        
+
         // 計算本月總量和平均值
         const monthTotal = monthData.reduce((sum, day) => sum + day.amount, 0);
         const monthAverage = dayOfMonth > 0 ? Math.round(monthTotal / dayOfMonth) : 0;
-        
+
         // 計算達標天數
         const goalsAchieved = monthData.filter(day => day.amount >= gameData.dailyGoal).length;
         const goalRate = dayOfMonth > 0 ? Math.round((goalsAchieved / dayOfMonth) * 100) : 0;
-        
+
         // 計算最佳連續達標天數
         const bestStreak = this.calculateBestStreak(monthData, gameData.dailyGoal);
-        
+
         // 計算月度成長趨勢
         const growthTrend = this.calculateMonthlyGrowth(monthData);
-        
+
         return {
             monthData: monthData,
             totalAmount: monthTotal,
@@ -1702,18 +1702,18 @@ class DashboardSystem {
         const today = new Date();
         const dayOfWeek = today.getDay(); // 0=週日, 1=週一, ...
         const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // 計算到週一的天數
-        
+
         const weekData = [];
         const gameData = this.appState.getGameData();
-        
+
         // 從週一到今天
         for (let i = mondayOffset; i >= 0; i--) {
             const date = new Date(today);
             date.setDate(date.getDate() - i);
-            
+
             const dateStr = date.toDateString();
             const dayName = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'][date.getDay()];
-            
+
             // 如果是今天，使用當前數據
             if (dateStr === today.toDateString()) {
                 weekData.push({
@@ -1733,7 +1733,7 @@ class DashboardSystem {
                 });
             }
         }
-        
+
         return weekData;
     }
 
@@ -1743,15 +1743,15 @@ class DashboardSystem {
     getMonthData() {
         const today = new Date();
         const dayOfMonth = today.getDate();
-        
+
         const monthData = [];
         const gameData = this.appState.getGameData();
-        
+
         // 從本月1號到今天
         for (let i = 1; i <= dayOfMonth; i++) {
             const date = new Date(today.getFullYear(), today.getMonth(), i);
             const dateStr = date.toDateString();
-            
+
             // 如果是今天，使用當前數據
             if (dateStr === today.toDateString()) {
                 monthData.push({
@@ -1771,7 +1771,7 @@ class DashboardSystem {
                 });
             }
         }
-        
+
         return monthData;
     }
 
@@ -1808,17 +1808,17 @@ class DashboardSystem {
      */
     calculateTrend(data) {
         if (data.length < 2) return 'stable';
-        
+
         // 計算前半段和後半段的平均值
         const midPoint = Math.floor(data.length / 2);
         const firstHalf = data.slice(0, midPoint);
         const secondHalf = data.slice(midPoint);
-        
+
         const firstAvg = firstHalf.reduce((sum, d) => sum + d.amount, 0) / firstHalf.length;
         const secondAvg = secondHalf.reduce((sum, d) => sum + d.amount, 0) / secondHalf.length;
-        
+
         const change = ((secondAvg - firstAvg) / firstAvg) * 100;
-        
+
         if (change > 10) return 'increasing';
         if (change < -10) return 'decreasing';
         return 'stable';
@@ -1830,7 +1830,7 @@ class DashboardSystem {
     calculateBestStreak(data, dailyGoal) {
         let currentStreak = 0;
         let bestStreak = 0;
-        
+
         data.forEach(day => {
             if (day.amount >= dailyGoal) {
                 currentStreak++;
@@ -1839,7 +1839,7 @@ class DashboardSystem {
                 currentStreak = 0;
             }
         });
-        
+
         return bestStreak;
     }
 
@@ -1848,17 +1848,17 @@ class DashboardSystem {
      */
     calculateMonthlyGrowth(data) {
         if (data.length < 7) return 'insufficient_data';
-        
+
         // 比較第一週和最後一週的平均值
         const firstWeek = data.slice(0, 7);
         const lastWeekStart = Math.max(0, data.length - 7);
         const lastWeek = data.slice(lastWeekStart);
-        
+
         const firstWeekAvg = firstWeek.reduce((sum, d) => sum + d.amount, 0) / firstWeek.length;
         const lastWeekAvg = lastWeek.reduce((sum, d) => sum + d.amount, 0) / lastWeek.length;
-        
+
         const growthRate = ((lastWeekAvg - firstWeekAvg) / firstWeekAvg) * 100;
-        
+
         return {
             rate: Math.round(growthRate),
             direction: growthRate > 5 ? 'improving' : growthRate < -5 ? 'declining' : 'stable'
@@ -1870,8 +1870,8 @@ class DashboardSystem {
      */
     getBestDay(data) {
         if (data.length === 0) return null;
-        
-        return data.reduce((best, current) => 
+
+        return data.reduce((best, current) =>
             current.amount > best.amount ? current : best
         );
     }
@@ -1881,12 +1881,12 @@ class DashboardSystem {
      */
     getWorstDay(data) {
         if (data.length === 0) return null;
-        
+
         // 只考慮有記錄的日子
         const daysWithData = data.filter(d => d.amount > 0);
         if (daysWithData.length === 0) return null;
-        
-        return daysWithData.reduce((worst, current) => 
+
+        return daysWithData.reduce((worst, current) =>
             current.amount < worst.amount ? current : worst
         );
     }
@@ -1905,7 +1905,7 @@ class DashboardSystem {
      */
     calculateGoalRate(data, dailyGoal) {
         if (data.length === 0) return 0;
-        
+
         const goalsAchieved = data.filter(day => day.amount >= dailyGoal).length;
         return Math.round((goalsAchieved / data.length) * 100);
     }
@@ -1927,7 +1927,7 @@ class DashboardSystem {
      */
     renderDailyView(stats) {
         console.log('每日統計:', stats);
-        
+
         // 準備圖表數據 - 顯示今日每次喝水記錄
         if (stats.entries && stats.entries.length > 0 && chartRenderer) {
             const chartData = stats.entries.slice(0, 10).reverse().map(entry => ({
@@ -1953,7 +1953,7 @@ class DashboardSystem {
      */
     renderWeeklyView(stats) {
         console.log('每週統計:', stats);
-        
+
         // 準備圖表數據 - 顯示本週每日總量
         if (stats.weekData && stats.weekData.length > 0 && chartRenderer) {
             const chartData = stats.weekData.map(day => ({
@@ -1993,7 +1993,7 @@ class DashboardSystem {
      */
     renderMonthlyView(stats) {
         console.log('每月統計:', stats);
-        
+
         // 準備圖表數據 - 顯示本月每日總量
         if (stats.monthData && stats.monthData.length > 0 && chartRenderer) {
             // 長條圖數據
@@ -2046,7 +2046,7 @@ class DashboardSystem {
      */
     getStatsSummary(period = 'daily') {
         const stats = this.getStats(period);
-        
+
         switch (period) {
             case 'daily':
                 return {
@@ -2056,7 +2056,7 @@ class DashboardSystem {
                     progress: stats.progress,
                     status: stats.goalAchieved ? '已達標' : '進行中'
                 };
-            
+
             case 'weekly':
                 return {
                     title: '本週統計',
@@ -2065,7 +2065,7 @@ class DashboardSystem {
                     progress: stats.goalAchievementRate,
                     status: `${stats.goalsAchieved}/${stats.daysTracked} 天達標`
                 };
-            
+
             case 'monthly':
                 return {
                     title: '本月統計',
@@ -2074,7 +2074,7 @@ class DashboardSystem {
                     progress: stats.goalAchievementRate,
                     status: `${stats.goalsAchieved}/${stats.daysTracked} 天達標`
                 };
-            
+
             default:
                 return null;
         }
@@ -2157,7 +2157,7 @@ class DashboardSystem {
      */
     getDashboardHTML() {
         const summary = this.getStatsSummary(this.currentView);
-        
+
         return `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <h2 style="margin: 0; color: #333;">📊 統計儀表板</h2>
@@ -2221,7 +2221,7 @@ class DashboardSystem {
                                 style="max-width: 100%; height: auto;"></canvas>
                     </div>
                 `;
-            
+
             case 'weekly':
                 return `
                     <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
@@ -2233,7 +2233,7 @@ class DashboardSystem {
                                 style="max-width: 100%; height: auto;"></canvas>
                     </div>
                 `;
-            
+
             case 'monthly':
                 return `
                     <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
@@ -2245,7 +2245,7 @@ class DashboardSystem {
                                 style="max-width: 100%; height: auto; margin: 0 auto; display: block;"></canvas>
                     </div>
                 `;
-            
+
             default:
                 return '';
         }
@@ -2321,7 +2321,7 @@ class ChartRenderer {
         // 繪製座標軸
         ctx.strokeStyle = this.colors.grid;
         ctx.lineWidth = 1;
-        
+
         // Y軸
         ctx.beginPath();
         ctx.moveTo(this.padding, this.padding);
@@ -2459,7 +2459,7 @@ class ChartRenderer {
         // 繪製座標軸
         ctx.strokeStyle = this.colors.grid;
         ctx.lineWidth = 1;
-        
+
         // Y軸
         ctx.beginPath();
         ctx.moveTo(this.padding, this.padding);
@@ -2750,7 +2750,7 @@ class WaterEntryManager {
 
             // 使用自訂時間或當前時間
             const timestamp = customTime ? new Date(customTime) : new Date();
-            
+
             // 驗證時間不能是未來
             if (timestamp > new Date()) {
                 throw new Error('不能記錄未來的時間');
@@ -2801,6 +2801,14 @@ class WaterEntryManager {
                 this.appState.notifyListeners('dailyGoalComplete');
             }
 
+            // 同步到雲端
+            if (typeof syncWaterRecord === 'function') {
+                syncWaterRecord(amount, timestamp.getTime());
+            }
+            if (typeof syncProgress === 'function') {
+                syncProgress();
+            }
+
             return entry;
 
         } catch (error) {
@@ -2814,7 +2822,7 @@ class WaterEntryManager {
      */
     insertEntryByTime(history, entry) {
         const entryTime = new Date(entry.timestamp);
-        
+
         // 找到插入位置（保持降序排列，最新的在前面）
         let insertIndex = history.findIndex(item => {
             const itemTime = new Date(item.timestamp);
@@ -2937,7 +2945,7 @@ class WaterEntryManager {
             // 重新計算等級和經驗值
             // 注意：這裡簡化處理，實際上應該從0開始重新計算等級
             // 但為了不影響已有的等級進度，我們只更新當前經驗值
-            
+
             // 更新狀態
             this.appState.updateGameData(gameData);
 
@@ -3115,7 +3123,7 @@ class WaterEntryManager {
         // 從 ISO 時間戳提取時間
         const entryDate = new Date(entry.timestamp);
         const timeValue = entryDate.toTimeString().slice(0, 5); // HH:MM
-        
+
         // 計算今天的時間範圍（00:00 到當前時間）
         const now = new Date();
         const maxTime = now.toTimeString().slice(0, 5); // 當前時間 HH:MM
@@ -3201,8 +3209,8 @@ class WaterEntryManager {
             // 組合日期和時間
             const today = new Date();
             const [hours, minutes] = newTime.split(':');
-            const newDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 
-                                        parseInt(hours), parseInt(minutes));
+            const newDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(),
+                parseInt(hours), parseInt(minutes));
 
             // 最後驗證：確保不是未來時間
             if (newDateTime > new Date()) {
@@ -3238,7 +3246,7 @@ class DataExportSystem {
     exportToCSV(dateRange = 7) {
         try {
             const data = this.getDataForRange(dateRange);
-            
+
             if (data.length === 0) {
                 alert('選擇的日期範圍內沒有數據');
                 return;
@@ -3246,10 +3254,10 @@ class DataExportSystem {
 
             // 建立 CSV 標題
             const headers = ['日期', '時間', '水量(ml)', '經驗值', '等級', '已解鎖成就'];
-            
+
             // 建立 CSV 內容
             const csvRows = [headers.join(',')];
-            
+
             data.forEach(entry => {
                 const row = [
                     entry.date,
@@ -3263,11 +3271,11 @@ class DataExportSystem {
             });
 
             const csvContent = csvRows.join('\n');
-            
+
             // 添加 BOM 以支援中文
             const BOM = '\uFEFF';
             const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
-            
+
             this.downloadFile(blob, `water-tracker-data-${this.getDateString()}.csv`);
             this.showSuccessMessage('CSV 檔案已匯出！');
 
@@ -3283,7 +3291,7 @@ class DataExportSystem {
     exportToJSON(dateRange = 7) {
         try {
             const data = this.getDataForRange(dateRange);
-            
+
             if (data.length === 0) {
                 alert('選擇的日期範圍內沒有數據');
                 return;
@@ -3298,7 +3306,7 @@ class DataExportSystem {
 
             const jsonContent = JSON.stringify(exportData, null, 2);
             const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
-            
+
             this.downloadFile(blob, `water-tracker-data-${this.getDateString()}.json`);
             this.showSuccessMessage('JSON 檔案已匯出！');
 
@@ -3338,7 +3346,7 @@ class DataExportSystem {
             } else {
                 // 從 localStorage 獲取歷史數據
                 const historicalAmount = this.getHistoricalAmount(dateStr);
-                
+
                 if (historicalAmount > 0) {
                     result.push({
                         date: date.toLocaleDateString('zh-TW'),
@@ -3397,7 +3405,7 @@ class DataExportSystem {
 
             const jsonContent = JSON.stringify(backup, null, 2);
             const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
-            
+
             this.downloadFile(blob, `water-tracker-backup-${this.getDateString()}.json`);
             this.showSuccessMessage('✅ 備份已完成！');
 
@@ -3412,16 +3420,16 @@ class DataExportSystem {
      */
     collectAllHistoricalData() {
         const historicalData = [];
-        
+
         try {
             // 遍歷 localStorage 尋找所有歷史記錄
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                
+
                 if (key && key.startsWith('waterHistory_')) {
                     const dateStr = key.replace('waterHistory_', '');
                     const amount = parseInt(localStorage.getItem(key));
-                    
+
                     if (amount > 0) {
                         historicalData.push({
                             date: dateStr,
@@ -3454,20 +3462,20 @@ class DataExportSystem {
                 reader.onload = (e) => {
                     try {
                         const backup = JSON.parse(e.target.result);
-                        
+
                         // 驗證備份檔案
                         this.validateBackup(backup);
-                        
+
                         // 套用備份
                         this.applyBackup(backup);
-                        
+
                         this.showSuccessMessage('✅ 數據已還原！頁面將重新載入...');
-                        
+
                         // 延遲重新載入以顯示訊息
                         setTimeout(() => {
                             window.location.reload();
                         }, 1500);
-                        
+
                         resolve(true);
 
                     } catch (error) {
@@ -3565,11 +3573,11 @@ class DataExportSystem {
             const link = document.createElement('a');
             link.href = url;
             link.download = filename;
-            
+
             // 觸發下載
             document.body.appendChild(link);
             link.click();
-            
+
             // 清理
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
@@ -3815,28 +3823,28 @@ function initGame() {
 
         // 初始化設定面板
         settingsPanel = new SettingsPanel(appState);
-        
+
         // 初始化通知系統
         const savedSettings = settingsPanel.loadSettings();
         notificationSystem = new NotificationSystem(savedSettings.notifications);
         notificationSystem.initialize();
-        
+
         // 初始化主題系統
         themeSystem = new ThemeSystem();
         themeSystem.initialize(savedSettings.theme);
-        
+
         // 初始化儀表板系統
         dashboardSystem = new DashboardSystem(appState);
-        
+
         // 初始化圖表繪製器
         chartRenderer = new ChartRenderer();
-        
+
         // 初始化水量記錄管理器
         waterEntryManager = new WaterEntryManager(appState);
-        
+
         // 初始化數據匯出系統
         dataExportSystem = new DataExportSystem(appState);
-        
+
         // 套用已儲存的設定
         settingsPanel.applySettings();
 
@@ -3940,23 +3948,23 @@ function addCustomWater() {
         // 檢查是否使用自訂時間
         const useCustomTime = document.getElementById('useCustomTime');
         const customTimeInput = document.getElementById('customTime');
-        
+
         let customDateTime = null;
-        
+
         if (useCustomTime && useCustomTime.checked) {
             const timeValue = customTimeInput.value;
-            
+
             if (!timeValue) {
                 alert('請選擇時間');
                 return;
             }
-            
+
             // 組合日期和時間
             const today = new Date();
             const [hours, minutes] = timeValue.split(':');
-            customDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 
-                                     parseInt(hours), parseInt(minutes));
-            
+            customDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(),
+                parseInt(hours), parseInt(minutes));
+
             // 驗證時間不能是未來
             if (customDateTime > new Date()) {
                 alert('不能設定未來的時間');
@@ -3965,7 +3973,7 @@ function addCustomWater() {
         }
 
         addWater(amount, customDateTime);
-        
+
         // 清空輸入
         amountInput.value = '';
         if (customTimeInput) {
@@ -4019,7 +4027,7 @@ function updateCharacter() {
         const gameData = appState.getGameData();
         const level = Math.min(gameData.level, 5);
         const stage = CHARACTER_STAGES[level];
-        
+
         // 檢查是否進化（等級改變）
         const oldLevel = character.dataset.level || '1';
         const hasEvolved = parseInt(oldLevel) !== level;
@@ -4028,11 +4036,11 @@ function updateCharacter() {
         character.className = `water-sprite sprite-level-${level}`;
         characterName.textContent = stage.name;
         character.dataset.level = level;
-        
+
         // 如果進化，添加進化動畫
         if (hasEvolved && typeof addAnimationClass === 'function') {
             addAnimationClass(character, 'character-evolve-animation', 1200);
-            
+
             // 宣告進化訊息
             if (typeof announceToScreenReader === 'function') {
                 announceToScreenReader(`恭喜！你的水精靈進化成 ${stage.name} 了！`, true);
@@ -4070,7 +4078,7 @@ function updateUI() {
         if (expFillEl) {
             const expPercent = (gameData.exp / gameData.maxExp) * 100;
             expFillEl.style.width = `${expPercent}%`;
-            
+
             // 添加經驗值增加動畫
             expFillEl.classList.add('exp-gain-animation');
             setTimeout(() => {
@@ -4095,7 +4103,7 @@ function updateUI() {
         if (dailyProgressEl) {
             const dailyPercent = Math.min((gameData.todayAmount / gameData.dailyGoal) * 100, 100);
             dailyProgressEl.style.width = `${dailyPercent}%`;
-            
+
             // 添加達標動畫
             if (gameData.todayAmount >= gameData.dailyGoal) {
                 dailyProgressEl.classList.add('goal-reached');
@@ -4156,6 +4164,11 @@ function checkAchievements() {
                 gameData.achievements.push(achievement.id);
                 appState.updateGameData(gameData);
                 appState.notifyListeners('achievementUnlock', achievement);
+
+                // 同步成就到雲端
+                if (typeof syncAchievement === 'function') {
+                    syncAchievement(achievement.id);
+                }
             }
         });
 
@@ -4262,7 +4275,7 @@ function renderHistory() {
 
             container.appendChild(item);
         });
-        
+
         // 添加交錯動畫
         if (typeof addStaggerAnimation === 'function') {
             addStaggerAnimation(container);
@@ -4288,15 +4301,15 @@ function showCelebration(message, emoji = '🎉') {
         if (emojiEl) {
             emojiEl.textContent = emoji;
         }
-        
+
         celebration.style.display = 'flex';
         celebration.setAttribute('aria-hidden', 'false');
-        
+
         // 宣告給螢幕閱讀器
         if (typeof announceToScreenReader === 'function') {
             announceToScreenReader(message, true);
         }
-        
+
         // 添加額外的視覺效果
         const content = celebration.querySelector('.celebration-content');
         if (content) {
@@ -4427,7 +4440,7 @@ function deleteWaterEntry(entryId) {
 document.addEventListener('DOMContentLoaded', () => {
     const celebration = document.getElementById('celebration');
     if (celebration) {
-        celebration.addEventListener('click', function() {
+        celebration.addEventListener('click', function () {
             this.style.display = 'none';
         });
     }
@@ -4436,9 +4449,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const useCustomTimeCheckbox = document.getElementById('useCustomTime');
     const customTimeContainer = document.getElementById('customTimeContainer');
     const customTimeInput = document.getElementById('customTime');
-    
+
     if (useCustomTimeCheckbox && customTimeContainer && customTimeInput) {
-        useCustomTimeCheckbox.addEventListener('change', function() {
+        useCustomTimeCheckbox.addEventListener('change', function () {
             if (this.checked) {
                 customTimeContainer.classList.add('show');
                 customTimeContainer.style.display = 'block';
@@ -4456,9 +4469,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 customTimeInput.value = '';
             }
         });
-        
+
         // 驗證時間輸入
-        customTimeInput.addEventListener('change', function() {
+        customTimeInput.addEventListener('change', function () {
             const now = new Date();
             const maxTime = now.toTimeString().slice(0, 5);
             if (this.value > maxTime) {
@@ -4479,21 +4492,21 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function initKeyboardNavigation() {
     // Enter 鍵快速添加自訂水量
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         // 自訂水量輸入框按 Enter
         if (e.key === 'Enter' && document.getElementById('customAmount') === document.activeElement) {
             e.preventDefault();
             addCustomWater();
         }
-        
+
         // 快捷鍵支援（當沒有輸入框聚焦時）
         const activeElement = document.activeElement;
-        const isInputFocused = activeElement.tagName === 'INPUT' || 
-                              activeElement.tagName === 'TEXTAREA' || 
-                              activeElement.tagName === 'SELECT';
-        
+        const isInputFocused = activeElement.tagName === 'INPUT' ||
+            activeElement.tagName === 'TEXTAREA' ||
+            activeElement.tagName === 'SELECT';
+
         if (!isInputFocused) {
-            switch(e.key) {
+            switch (e.key) {
                 case '1':
                     // 快速按鈕 1
                     e.preventDefault();
@@ -4503,7 +4516,7 @@ function initKeyboardNavigation() {
                         btn1.focus();
                     }
                     break;
-                    
+
                 case '2':
                     // 快速按鈕 2
                     e.preventDefault();
@@ -4513,7 +4526,7 @@ function initKeyboardNavigation() {
                         btn2.focus();
                     }
                     break;
-                    
+
                 case '3':
                     // 快速按鈕 3
                     e.preventDefault();
@@ -4523,7 +4536,7 @@ function initKeyboardNavigation() {
                         btn3.focus();
                     }
                     break;
-                    
+
                 case 'c':
                 case 'C':
                     // 聚焦到自訂水量輸入框
@@ -4534,21 +4547,21 @@ function initKeyboardNavigation() {
                         customInput.select();
                     }
                     break;
-                    
+
                 case 's':
                 case 'S':
                     // 開啟設定
                     e.preventDefault();
                     showSettings();
                     break;
-                    
+
                 case 'd':
                 case 'D':
                     // 開啟統計儀表板
                     e.preventDefault();
                     showDashboard();
                     break;
-                    
+
                 case 'h':
                 case 'H':
                 case '?':
@@ -4556,7 +4569,7 @@ function initKeyboardNavigation() {
                     e.preventDefault();
                     restartOnboarding();
                     break;
-                    
+
                 case 'Escape':
                     // ESC 關閉所有彈出視窗
                     e.preventDefault();
@@ -4565,7 +4578,7 @@ function initKeyboardNavigation() {
             }
         }
     });
-    
+
     // 為所有互動元素添加鍵盤提示
     addKeyboardHints();
 }
@@ -4578,22 +4591,22 @@ function closeAllModals() {
     if (settingsPanel && settingsPanel.isVisible) {
         settingsPanel.hide();
     }
-    
+
     // 關閉儀表板
     if (dashboardSystem && dashboardSystem.isVisible) {
         dashboardSystem.hide();
     }
-    
+
     // 關閉匯出面板
     if (dataExportSystem && dataExportSystem.isVisible) {
         dataExportSystem.hide();
     }
-    
+
     // 關閉導覽
     if (onboardingSystem && onboardingSystem.overlay) {
         onboardingSystem.completeOnboarding();
     }
-    
+
     // 關閉慶祝動畫
     const celebration = document.getElementById('celebration');
     if (celebration && celebration.style.display !== 'none') {
@@ -4612,7 +4625,7 @@ function addKeyboardHints() {
         btn.setAttribute('aria-label', `${currentLabel}（快捷鍵：${index + 1}）`);
         btn.setAttribute('title', `${currentLabel}（快捷鍵：${index + 1}）`);
     });
-    
+
     // 為其他功能按鈕添加鍵盤提示
     const settingsBtn = document.querySelector('.settings-btn');
     if (settingsBtn) {
@@ -4620,21 +4633,21 @@ function addKeyboardHints() {
         settingsBtn.setAttribute('aria-label', `${currentLabel}（快捷鍵：S）`);
         settingsBtn.setAttribute('title', `${currentLabel}（快捷鍵：S）`);
     }
-    
+
     const dashboardBtn = document.querySelector('.dashboard-btn');
     if (dashboardBtn) {
         const currentLabel = dashboardBtn.getAttribute('aria-label') || '統計';
         dashboardBtn.setAttribute('aria-label', `${currentLabel}（快捷鍵：D）`);
         dashboardBtn.setAttribute('title', `${currentLabel}（快捷鍵：D）`);
     }
-    
+
     const helpBtn = document.querySelector('.help-btn');
     if (helpBtn) {
         const currentLabel = helpBtn.getAttribute('aria-label') || '使用說明';
         helpBtn.setAttribute('aria-label', `${currentLabel}（快捷鍵：H 或 ?）`);
         helpBtn.setAttribute('title', `${currentLabel}（快捷鍵：H 或 ?）`);
     }
-    
+
     // 為自訂水量輸入框添加提示
     const customInput = document.getElementById('customAmount');
     if (customInput) {
@@ -4651,18 +4664,18 @@ function enhanceFocusIndicators() {
     const focusableElements = document.querySelectorAll(
         'button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
-    
+
     focusableElements.forEach(element => {
-        element.addEventListener('focus', function() {
+        element.addEventListener('focus', function () {
             this.classList.add('keyboard-focused');
         });
-        
-        element.addEventListener('blur', function() {
+
+        element.addEventListener('blur', function () {
             this.classList.remove('keyboard-focused');
         });
-        
+
         // 滑鼠點擊時移除鍵盤焦點樣式
-        element.addEventListener('mousedown', function() {
+        element.addEventListener('mousedown', function () {
             this.classList.remove('keyboard-focused');
         });
     });
@@ -4678,9 +4691,9 @@ function announceToScreenReader(message, priority = 'polite') {
     announcement.setAttribute('aria-atomic', 'true');
     announcement.className = 'sr-only';
     announcement.textContent = message;
-    
+
     document.body.appendChild(announcement);
-    
+
     // 移除舊的宣告
     setTimeout(() => {
         if (announcement.parentNode) {
@@ -4694,12 +4707,12 @@ function announceToScreenReader(message, priority = 'polite') {
  */
 function enhanceButtonFeedback() {
     const buttons = document.querySelectorAll('button');
-    
+
     buttons.forEach(button => {
-        button.addEventListener('click', function(e) {
+        button.addEventListener('click', function (e) {
             // 添加視覺回饋動畫
             this.classList.add('button-pressed');
-            
+
             // 移除動畫類別
             setTimeout(() => {
                 this.classList.remove('button-pressed');
@@ -4724,16 +4737,16 @@ function initAccessibility() {
     try {
         // 設置鍵盤快捷鍵
         setupKeyboardShortcuts();
-        
+
         // 增強焦點管理
         enhanceFocusManagement();
-        
+
         // 添加 ARIA live regions
         setupLiveRegions();
-        
+
         // 初始化鍵盤導航提示
         addKeyboardHints();
-        
+
         console.log('無障礙功能已初始化');
     } catch (error) {
         console.error('初始化無障礙功能失敗:', error);
@@ -4747,7 +4760,7 @@ function setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
         // Alt + 數字鍵：快速添加水量
         if (e.altKey && !e.ctrlKey && !e.shiftKey) {
-            switch(e.key) {
+            switch (e.key) {
                 case '1':
                     e.preventDefault();
                     addWater(250);
@@ -4783,7 +4796,7 @@ function setupKeyboardShortcuts() {
                     break;
             }
         }
-        
+
         // Escape 鍵：關閉模態對話框
         if (e.key === 'Escape') {
             closeAllModals();
@@ -4797,7 +4810,7 @@ function setupKeyboardShortcuts() {
 function enhanceFocusManagement() {
     // 追蹤最後的焦點元素
     let lastFocusedElement = null;
-    
+
     // 當模態對話框打開時，保存焦點並設置焦點陷阱
     document.addEventListener('focusin', (e) => {
         const modal = e.target.closest('[role="dialog"], [role="alertdialog"]');
@@ -4811,15 +4824,15 @@ function enhanceFocusManagement() {
             }
         }
     });
-    
+
     // 為所有互動元素添加焦點指示器
     const interactiveElements = document.querySelectorAll('button, a, input, select, textarea, [role="button"]');
     interactiveElements.forEach(element => {
-        element.addEventListener('focus', function() {
+        element.addEventListener('focus', function () {
             this.classList.add('has-focus');
         });
-        
-        element.addEventListener('blur', function() {
+
+        element.addEventListener('blur', function () {
             this.classList.remove('has-focus');
         });
     });
@@ -4839,7 +4852,7 @@ function setupLiveRegions() {
         liveRegion.className = 'sr-only';
         document.body.appendChild(liveRegion);
     }
-    
+
     // 創建緊急通知區域
     if (!document.getElementById('aria-alert-region')) {
         const alertRegion = document.createElement('div');
@@ -4858,14 +4871,14 @@ function setupLiveRegions() {
 function announceToScreenReader(message, isUrgent = false) {
     const regionId = isUrgent ? 'aria-alert-region' : 'aria-live-region';
     const region = document.getElementById(regionId);
-    
+
     if (region) {
         // 清空後重新設置，確保螢幕閱讀器會讀取
         region.textContent = '';
         setTimeout(() => {
             region.textContent = message;
         }, 100);
-        
+
         // 3秒後清空
         setTimeout(() => {
             region.textContent = '';
@@ -4896,19 +4909,19 @@ function closeAllModals() {
     if (settingsPanel && settingsPanel.isVisible) {
         settingsPanel.hide();
     }
-    
+
     // 關閉儀表板
     const dashboardOverlay = document.querySelector('.dashboard-overlay');
     if (dashboardOverlay && dashboardSystem) {
         dashboardSystem.hideDashboard(dashboardOverlay);
     }
-    
+
     // 關閉匯出面板
     const exportOverlay = document.querySelector('.export-overlay');
     if (exportOverlay && dataExportSystem) {
         dataExportSystem.hideExportPanel(exportOverlay);
     }
-    
+
     // 關閉新手導覽
     if (onboardingSystem && onboardingSystem.overlay) {
         onboardingSystem.completeOnboarding();
@@ -4920,9 +4933,9 @@ function closeAllModals() {
  */
 function addAnimationClass(element, animationClass, duration = 1000) {
     if (!element) return;
-    
+
     element.classList.add(animationClass);
-    
+
     setTimeout(() => {
         element.classList.remove(animationClass);
     }, duration);
@@ -4933,23 +4946,23 @@ function addAnimationClass(element, animationClass, duration = 1000) {
  */
 function animateNumber(element, start, end, duration = 500) {
     if (!element) return;
-    
+
     const range = end - start;
     const increment = range / (duration / 16); // 60fps
     let current = start;
-    
+
     const timer = setInterval(() => {
         current += increment;
-        
+
         if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
             current = end;
             clearInterval(timer);
             element.classList.remove('number-count-up');
         }
-        
+
         element.textContent = Math.round(current);
     }, 16);
-    
+
     element.classList.add('number-count-up');
 }
 
@@ -4961,26 +4974,26 @@ function showToast(message, type = 'info', duration = 3000) {
     toast.className = 'notification-toast';
     toast.setAttribute('role', 'status');
     toast.setAttribute('aria-live', 'polite');
-    
+
     const icons = {
         success: '✅',
         error: '❌',
         warning: '⚠️',
         info: 'ℹ️'
     };
-    
+
     toast.innerHTML = `
         <div style="display: flex; align-items: center; gap: 12px;">
             <span style="font-size: 1.5em;" aria-hidden="true">${icons[type] || icons.info}</span>
             <span>${message}</span>
         </div>
     `;
-    
+
     document.body.appendChild(toast);
-    
+
     // 宣告給螢幕閱讀器
     announceToScreenReader(message);
-    
+
     // 自動移除
     setTimeout(() => {
         toast.classList.add('hiding');
@@ -4999,19 +5012,19 @@ function showEnhancedCelebration(message, emoji = '🎉') {
     const celebration = document.getElementById('celebration');
     const celebrationText = document.getElementById('celebrationText');
     const celebrationEmoji = celebration?.querySelector('.celebration-emoji');
-    
+
     if (celebration && celebrationText) {
         celebrationText.textContent = message;
         if (celebrationEmoji) {
             celebrationEmoji.textContent = emoji;
         }
-        
+
         celebration.style.display = 'flex';
         celebration.setAttribute('aria-hidden', 'false');
-        
+
         // 宣告給螢幕閱讀器
         announceToScreenReader(message, true);
-        
+
         // 添加額外的視覺效果
         const content = celebration.querySelector('.celebration-content');
         if (content) {
@@ -5020,7 +5033,7 @@ function showEnhancedCelebration(message, emoji = '🎉') {
                 content.style.animation = 'celebrationPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
             }, 10);
         }
-        
+
         setTimeout(() => {
             celebration.style.display = 'none';
             celebration.setAttribute('aria-hidden', 'true');
@@ -5033,9 +5046,9 @@ function showEnhancedCelebration(message, emoji = '🎉') {
  */
 function addStaggerAnimation(container) {
     if (!container) return;
-    
+
     container.classList.add('stagger-animation');
-    
+
     // 動畫完成後移除類別
     setTimeout(() => {
         container.classList.remove('stagger-animation');
@@ -5176,7 +5189,7 @@ class PerformanceMonitor {
      */
     measureOperation(name, operation) {
         const startTime = performance.now();
-        
+
         try {
             const result = operation();
             const endTime = performance.now();
@@ -5390,7 +5403,7 @@ class DOMOptimizer {
         }
 
         const images = container.querySelectorAll('img[data-src]');
-        
+
         const imageObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -5410,7 +5423,7 @@ class DOMOptimizer {
      */
     throttle(func, delay) {
         let lastCall = 0;
-        return function(...args) {
+        return function (...args) {
             const now = Date.now();
             if (now - lastCall >= delay) {
                 lastCall = now;
@@ -5424,7 +5437,7 @@ class DOMOptimizer {
      */
     debounce(func, delay) {
         let timeoutId;
-        return function(...args) {
+        return function (...args) {
             clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
                 func.apply(this, args);
@@ -5610,7 +5623,7 @@ class BrowserCompatibility {
             this.checkFeatures();
             this.applyPolyfills();
             this.showCompatibilityWarnings();
-            
+
             return this.browser.isSupported;
 
         } catch (error) {
@@ -5624,7 +5637,7 @@ class BrowserCompatibility {
      */
     detectBrowser() {
         const ua = navigator.userAgent;
-        
+
         // 檢測 Chrome
         if (ua.indexOf('Chrome') > -1 && ua.indexOf('Edge') === -1) {
             this.browser.name = 'Chrome';
@@ -5670,25 +5683,25 @@ class BrowserCompatibility {
     checkFeatures() {
         // 檢查 LocalStorage
         this.features.localStorage = this.checkLocalStorage();
-        
+
         // 檢查 Notifications API
         this.features.notifications = 'Notification' in window;
-        
+
         // 檢查 Service Worker
         this.features.serviceWorker = 'serviceWorker' in navigator;
-        
+
         // 檢查 IntersectionObserver
         this.features.intersectionObserver = 'IntersectionObserver' in window;
-        
+
         // 檢查 requestAnimationFrame
         this.features.requestAnimationFrame = 'requestAnimationFrame' in window;
-        
+
         // 檢查 Fetch API
         this.features.fetch = 'fetch' in window;
-        
+
         // 檢查 Promises
         this.features.promises = 'Promise' in window;
-        
+
         // 檢查 ES6 支援
         this.features.es6 = this.checkES6Support();
 
@@ -5730,7 +5743,7 @@ class BrowserCompatibility {
             const template = `test`;
             // 測試解構
             const [a, b] = [1, 2];
-            
+
             return true;
         } catch (error) {
             return false;
@@ -5746,7 +5759,7 @@ class BrowserCompatibility {
             window.requestAnimationFrame = window.requestAnimationFrame ||
                 window.webkitRequestAnimationFrame ||
                 window.mozRequestAnimationFrame ||
-                function(callback) {
+                function (callback) {
                     return setTimeout(callback, 1000 / 60);
                 };
         }
@@ -5769,7 +5782,7 @@ class BrowserCompatibility {
         if (!this.browser.isSupported) {
             const message = `您的瀏覽器 (${this.browser.name} ${this.browser.version}) 可能不完全支援此應用程式。建議使用最新版本的 Chrome、Firefox、Safari 或 Edge。`;
             console.warn(message);
-            
+
             // 顯示警告訊息給使用者
             setTimeout(() => {
                 if (confirm(message + '\n\n是否繼續使用？')) {
@@ -5871,10 +5884,10 @@ class OfflineManager {
         this.isOnline = true;
         this.updateUI();
         this.showNotification('✅ 網路連線已恢復', 'success');
-        
+
         // 同步待處理的操作
         this.syncPendingOperations();
-        
+
         // 通知監聽器
         this.notifyListeners('online');
     }
@@ -5887,7 +5900,7 @@ class OfflineManager {
         this.isOnline = false;
         this.updateUI();
         this.showNotification('⚠️ 網路連線已中斷，數據將在本地儲存', 'warning');
-        
+
         // 通知監聽器
         this.notifyListeners('offline');
     }
@@ -5898,7 +5911,7 @@ class OfflineManager {
     updateUI() {
         // 檢查是否有狀態指示器
         let indicator = document.getElementById('online-status-indicator');
-        
+
         if (!indicator) {
             // 創建狀態指示器
             indicator = document.createElement('div');
@@ -5932,7 +5945,7 @@ class OfflineManager {
             indicator.style.background = '#00b894';
             indicator.style.color = 'white';
             indicator.innerHTML = '✓ 已連線';
-            
+
             // 3秒後隱藏
             setTimeout(() => {
                 indicator.style.display = 'none';
@@ -6097,30 +6110,261 @@ class OfflineManager {
     }
 }
 
+// ==================== Supabase 整合函式 ====================
+
+/**
+ * 從雲端載入使用者數據
+ */
+async function loadCloudData() {
+    if (!supabaseClient || !supabaseClient.isAuthenticated()) {
+        return;
+    }
+
+    try {
+        const cloudData = await supabaseClient.loadUserData();
+
+        if (!cloudData) {
+            console.log('雲端無數據，使用本地數據');
+            return;
+        }
+
+        // 合併雲端進度數據
+        if (cloudData.progress) {
+            appState.gameData.level = cloudData.progress.level;
+            appState.gameData.exp = cloudData.progress.exp;
+            appState.gameData.maxExp = cloudData.progress.max_exp;
+            appState.gameData.totalAmount = cloudData.progress.total_amount;
+        }
+
+        // 合併雲端設定
+        if (cloudData.settings) {
+            appState.settings.dailyGoal = cloudData.settings.daily_goal;
+            appState.settings.quickButtons = cloudData.settings.quick_buttons;
+            appState.settings.notificationsEnabled = cloudData.settings.notifications_enabled;
+            appState.settings.theme = cloudData.settings.theme;
+        }
+
+        // 計算今日飲水量（從雲端記錄）
+        if (cloudData.todayRecords && cloudData.todayRecords.length > 0) {
+            appState.gameData.todayAmount = cloudData.todayRecords.reduce(
+                (sum, record) => sum + record.amount,
+                0
+            );
+
+            // 更新歷史記錄
+            appState.gameData.history = cloudData.todayRecords.map(record => ({
+                amount: record.amount,
+                timestamp: new Date(record.recorded_at).getTime()
+            }));
+        }
+
+        // 合併成就
+        if (cloudData.achievements && cloudData.achievements.length > 0) {
+            appState.gameData.achievements = cloudData.achievements;
+        }
+
+        // 儲存到本地
+        appState.saveState();
+
+        // 更新 UI
+        updateUI();
+
+        console.log('雲端數據載入完成');
+    } catch (error) {
+        console.error('載入雲端數據失敗:', error);
+    }
+}
+
+/**
+ * 同步飲水記錄到雲端
+ */
+async function syncWaterRecord(amount, timestamp) {
+    if (!supabaseClient || !supabaseClient.isAuthenticated()) {
+        return;
+    }
+
+    try {
+        await supabaseClient.addWaterRecord({
+            amount: amount,
+            recorded_at: new Date(timestamp).toISOString()
+        });
+    } catch (error) {
+        console.error('同步飲水記錄失敗:', error);
+    }
+}
+
+/**
+ * 同步使用者進度到雲端
+ */
+async function syncProgress() {
+    if (!supabaseClient || !supabaseClient.isAuthenticated()) {
+        return;
+    }
+
+    try {
+        await supabaseClient.updateProgress({
+            level: appState.gameData.level,
+            exp: appState.gameData.exp,
+            max_exp: appState.gameData.maxExp,
+            total_amount: appState.gameData.totalAmount
+        });
+    } catch (error) {
+        console.error('同步進度失敗:', error);
+    }
+}
+
+/**
+ * 同步成就到雲端
+ */
+async function syncAchievement(achievementId) {
+    if (!supabaseClient || !supabaseClient.isAuthenticated()) {
+        return;
+    }
+
+    try {
+        await supabaseClient.unlockAchievement(achievementId);
+    } catch (error) {
+        console.error('同步成就失敗:', error);
+    }
+}
+
+/**
+ * 清除本地數據（登出時）
+ */
+function clearLocalDataOnLogout() {
+    try {
+        localStorage.removeItem('waterGameData');
+        localStorage.removeItem('lastPlayDate');
+        localStorage.removeItem('appSettings');
+        localStorage.removeItem('onboardingCompleted');
+        localStorage.removeItem('historicalData');
+        console.log('本地數據已清除');
+    } catch (error) {
+        console.error('清除本地數據失敗:', error);
+    }
+}
+
+/**
+ * 隱藏主要內容（未登入時）
+ */
+function hideMainContent() {
+    try {
+        const mainContent = document.getElementById('main-content');
+        const header = document.querySelector('header');
+
+        if (mainContent) {
+            mainContent.style.display = 'none';
+        }
+
+        if (header) {
+            // 只顯示標題，隱藏導航按鈕
+            const nav = header.querySelector('nav');
+            if (nav) {
+                nav.style.display = 'none';
+            }
+
+            // 隱藏等級資訊
+            const levelInfo = header.querySelector('.level-info');
+            if (levelInfo) {
+                levelInfo.style.display = 'none';
+            }
+        }
+
+        console.log('主要內容已隱藏');
+    } catch (error) {
+        console.error('隱藏主要內容失敗:', error);
+    }
+}
+
+/**
+ * 顯示主要內容（登入後）
+ */
+function showMainContent() {
+    try {
+        const mainContent = document.getElementById('main-content');
+        const header = document.querySelector('header');
+
+        if (mainContent) {
+            mainContent.style.display = 'block';
+        }
+
+        if (header) {
+            // 顯示導航按鈕
+            const nav = header.querySelector('nav');
+            if (nav) {
+                nav.style.display = 'flex';
+            }
+
+            // 顯示等級資訊
+            const levelInfo = header.querySelector('.level-info');
+            if (levelInfo) {
+                levelInfo.style.display = 'block';
+            }
+        }
+
+        console.log('主要內容已顯示');
+    } catch (error) {
+        console.error('顯示主要內容失敗:', error);
+    }
+}
+
 // ==================== 全域實例 ====================
 
 let browserCompatibility = null;
 let offlineManager = null;
 
 // 在初始化時調用無障礙功能
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     initAccessibility();
-    
+
     // 初始化瀏覽器相容性檢測
     browserCompatibility = new BrowserCompatibility();
     const isCompatible = browserCompatibility.initialize();
-    
+
     if (!isCompatible) {
         console.warn('瀏覽器相容性檢測發現問題');
     }
-    
+
     // 初始化離線管理
     offlineManager = new OfflineManager();
     offlineManager.initialize();
     offlineManager.loadPendingOperations();
-    
+
     // 如果有待處理操作且目前在線，嘗試同步
     if (offlineManager.checkOnlineStatus() && offlineManager.getPendingCount() > 0) {
         offlineManager.syncPendingOperations();
     }
+
+    // 初始化 Supabase 客戶端（必須）
+    if (typeof supabaseClient !== 'undefined') {
+        console.log('正在初始化 Supabase...');
+        const initialized = await supabaseClient.initialize();
+
+        if (initialized) {
+            console.log('Supabase 初始化成功');
+
+            // 載入同步佇列
+            supabaseClient.loadSyncQueue();
+
+            // 更新使用者資訊 UI
+            if (typeof authUI !== 'undefined') {
+                authUI.updateUserInfo();
+            }
+
+            // 檢查登入狀態
+            if (supabaseClient.isAuthenticated()) {
+                console.log('使用者已登入，載入雲端數據...');
+                await loadCloudData();
+            } else {
+                console.log('使用者未登入，使用本地模式');
+            }
+        } else {
+            console.warn('Supabase 初始化失敗，將使用離線模式');
+        }
+    } else {
+        console.log('Supabase 未載入，使用離線模式');
+    }
+
+    // 初始化應用（無論是否登入都執行）
+    initGame();
 });
