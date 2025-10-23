@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>效能與離線功能測試</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0984e3;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #0984e3;
+            padding-bottom: 10px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #0984e3;
+        }
+        .success {
+            border-left-color: #00b894;
+            background: #e8f8f5;
+        }
+        .warning {
+            border-left-color: #fdcb6e;
+            background: #fef9e7;
+        }
+        .error {
+            border-left-color: #d63031;
+            background: #ffeaa7;
+        }
+        pre {
+            background: #2d3436;
+            color: #dfe6e9;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .online {
+            background: #00b894;
+            color: white;
+        }
+        .offline {
+            background: #d63031;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 效能與離線功能測試</h1>
+    
+    <div class="test-section">
+        <h2>1. 瀏覽器相容性檢測</h2>
+        <button onclick="testBrowserCompatibility()">執行相容性檢測</button>
+        <div id="compatibility-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 效能監控測試</h2>
+        <button onclick="testPerformanceMonitor()">測試效能監控</button>
+        <button onclick="testLoadingIndicator()">測試載入指示器</button>
+        <button onclick="testOperationMeasurement()">測試操作計時</button>
+        <div id="performance-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 離線功能測試</h2>
+        <p>目前狀態: <span id="online-status" class="status-badge">檢測中...</span></p>
+        <button onclick="testOfflineManager()">測試離線管理</button>
+        <button onclick="simulateOffline()">模擬離線</button>
+        <button onclick="simulateOnline()">模擬上線</button>
+        <button onclick="testPendingOperations()">測試待處理操作</button>
+        <div id="offline-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. DOM 優化測試</h2>
+        <button onclick="testDOMOptimizer()">測試 DOM 優化</button>
+        <button onclick="testBatchUpdate()">測試批次更新</button>
+        <button onclick="testThrottle()">測試節流</button>
+        <div id="dom-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. 數據快取測試</h2>
+        <button onclick="testDataCache()">測試數據快取</button>
+        <button onclick="testCacheExpiration()">測試快取過期</button>
+        <div id="cache-result"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // 等待 DOM 載入完成
+        window.addEventListener('load', () => {
+            updateOnlineStatus();
+            
+            // 監聽線上/離線狀態變化
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+        });
+
+        function updateOnlineStatus() {
+            const statusEl = document.getElementById('online-status');
+            if (navigator.onLine) {
+                statusEl.textContent = '線上';
+                statusEl.className = 'status-badge online';
+            } else {
+                statusEl.textContent = '離線';
+                statusEl.className = 'status-badge offline';
+            }
+        }
+
+        function showResult(elementId, content, type = 'result') {
+            const el = document.getElementById(elementId);
+            el.innerHTML = `<div class="${type}">${content}</div>`;
+        }
+
+        // 1. 瀏覽器相容性測試
+        function testBrowserCompatibility() {
+            if (!browserCompatibility) {
+                showResult('compatibility-result', '❌ BrowserCompatibility 未初始化', 'error');
+                return;
+            }
+
+            const features = browserCompatibility.features;
+            const browser = browserCompatibility.browser;
+            
+            let html = `
+                <h3>瀏覽器資訊</h3>
+                <p><strong>名稱:</strong> ${browser.name}</p>
+                <p><strong>版本:</strong> ${browser.version}</p>
+                <p><strong>支援狀態:</strong> ${browser.isSupported ? '✅ 支援' : '❌ 不支援'}</p>
+                
+                <h3>功能支援</h3>
+                <ul>
+                    ${Object.entries(features).map(([key, value]) => 
+                        `<li><strong>${key}:</strong> ${value ? '✅' : '❌'}</li>`
+                    ).join('')}
+                </ul>
+            `;
+
+            showResult('compatibility-result', html, browser.isSupported ? 'success' : 'warning');
+        }
+
+        // 2. 效能監控測試
+        function testPerformanceMonitor() {
+            const monitor = new PerformanceMonitor();
+            monitor.initialize();
+            
+            const report = monitor.getPerformanceReport();
+            
+            let html = `
+                <h3>效能報告</h3>
+                <pre>${JSON.stringify(report, null, 2)}</pre>
+            `;
+            
+            showResult('performance-result', html, 'success');
+        }
+
+        function testLoadingIndicator() {
+            const monitor = new PerformanceMonitor();
+            monitor.showLoadingIndicator('測試載入中...');
+            
+            setTimeout(() => {
+                monitor.hideLoadingIndicator();
+                showResult('performance-result', '✅ 載入指示器測試完成', 'success');
+            }, 2000);
+        }
+
+        function testOperationMeasurement() {
+            const monitor = new PerformanceMonitor();
+            
+            // 測試一個簡單操作
+            const result = monitor.measureOperation('測試操作', () => {
+                let sum = 0;
+                for (let i = 0; i < 1000000; i++) {
+                    sum += i;
+                }
+                return sum;
+            });
+            
+            const lastOp = monitor.metrics.operations[monitor.metrics.operations.length - 1];
+            
+            showResult('performance-result', 
+                `✅ 操作完成<br>執行時間: ${lastOp.duration.toFixed(2)}ms<br>結果: ${result}`, 
+                'success');
+        }
+
+        // 3. 離線功能測試
+        function testOfflineManager() {
+            if (!offlineManager) {
+                showResult('offline-result', '❌ OfflineManager 未初始化', 'error');
+                return;
+            }
+
+            const isOnline = offlineManager.checkOnlineStatus();
+            const pendingCount = offlineManager.getPendingCount();
+            
+            let html = `
+                <h3>離線管理狀態</h3>
+                <p><strong>線上狀態:</strong> ${isOnline ? '✅ 線上' : '⚠️ 離線'}</p>
+                <p><strong>待處理操作:</strong> ${pendingCount} 個</p>
+                <p><strong>同步進行中:</strong> ${offlineManager.syncInProgress ? '是' : '否'}</p>
+            `;
+            
+            showResult('offline-result', html, isOnline ? 'success' : 'warning');
+        }
+
+        function simulateOffline() {
+            showResult('offline-result', '⚠️ 請使用瀏覽器開發者工具切換到離線模式', 'warning');
+        }
+
+        function simulateOnline() {
+            showResult('offline-result', '✅ 請使用瀏覽器開發者工具切換到線上模式', 'success');
+        }
+
+        function testPendingOperations() {
+            if (!offlineManager) {
+                showResult('offline-result', '❌ OfflineManager 未初始化', 'error');
+                return;
+            }
+
+            // 添加測試操作
+            offlineManager.addPendingOperation({
+                type: 'test',
+                data: { message: '測試操作', timestamp: Date.now() }
+            });
+
+            const count = offlineManager.getPendingCount();
+            showResult('offline-result', 
+                `✅ 已添加測試操作<br>待處理操作數: ${count}`, 
+                'success');
+        }
+
+        // 4. DOM 優化測試
+        function testDOMOptimizer() {
+            const optimizer = new DOMOptimizer();
+            
+            let html = `
+                <h3>DOM 優化工具</h3>
+                <p>✅ DOMOptimizer 已創建</p>
+                <p><strong>快取大小:</strong> ${optimizer.cache.size}</p>
+            `;
+            
+            showResult('dom-result', html, 'success');
+        }
+
+        function testBatchUpdate() {
+            const optimizer = new DOMOptimizer();
+            const startTime = performance.now();
+            
+            // 批次更新測試
+            for (let i = 0; i < 100; i++) {
+                optimizer.batchUpdate(() => {
+                    // 模擬 DOM 更新
+                });
+            }
+            
+            const endTime = performance.now();
+            
+            showResult('dom-result', 
+                `✅ 批次更新測試完成<br>執行時間: ${(endTime - startTime).toFixed(2)}ms`, 
+                'success');
+        }
+
+        function testThrottle() {
+            const optimizer = new DOMOptimizer();
+            let callCount = 0;
+            
+            const throttled = optimizer.throttle(() => {
+                callCount++;
+            }, 100);
+            
+            // 快速呼叫多次
+            for (let i = 0; i < 10; i++) {
+                throttled();
+            }
+            
+            setTimeout(() => {
+                showResult('dom-result', 
+                    `✅ 節流測試完成<br>呼叫次數: ${callCount} (應該只有 1-2 次)`, 
+                    'success');
+            }, 200);
+        }
+
+        // 5. 數據快取測試
+        function testDataCache() {
+            const cache = new DataCache(10, 5000);
+            
+            // 設定一些測試數據
+            cache.set('test1', { data: 'value1' });
+            cache.set('test2', { data: 'value2' });
+            cache.set('test3', { data: 'value3' });
+            
+            const value1 = cache.get('test1');
+            const value2 = cache.get('test2');
+            
+            let html = `
+                <h3>數據快取測試</h3>
+                <p>✅ 快取已創建</p>
+                <p><strong>快取大小:</strong> ${cache.size()}</p>
+                <p><strong>測試數據 1:</strong> ${JSON.stringify(value1)}</p>
+                <p><strong>測試數據 2:</strong> ${JSON.stringify(value2)}</p>
+            `;
+            
+            showResult('cache-result', html, 'success');
+        }
+
+        function testCacheExpiration() {
+            const cache = new DataCache(10, 1000); // 1秒過期
+            
+            cache.set('expiring', { data: 'will expire' });
+            
+            showResult('cache-result', '⏳ 等待快取過期 (1秒)...', 'warning');
+            
+            setTimeout(() => {
+                const value = cache.get('expiring');
+                
+                let html = `
+                    <h3>快取過期測試</h3>
+                    <p><strong>1秒後的值:</strong> ${value === null ? '✅ 已過期 (null)' : '❌ 未過期'}</p>
+                `;
+                
+                showResult('cache-result', html, value === null ? 'success' : 'error');
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

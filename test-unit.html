@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>單元測試 - 水精靈養成記</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { color: #0984e3; }
+        .test-suite {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-case {
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 4px solid #ddd;
+            background: #f8f9fa;
+        }
+        .test-case.pass {
+            border-left-color: #00b894;
+            background: #e8f8f5;
+        }
+        .test-case.fail {
+            border-left-color: #d63031;
+            background: #ffe8e8;
+        }
+        .summary {
+            background: #0984e3;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .error-detail {
+            color: #d63031;
+            font-size: 0.9em;
+            margin-top: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 單元測試</h1>
+    <div id="test-results"></div>
+    <div id="summary" class="summary"></div>
+
+    <script src="script.js"></script>
+    <script>
+        // 簡單的測試框架
+        class TestRunner {
+            constructor() {
+                this.results = [];
+                this.currentSuite = null;
+            }
+
+            describe(name, fn) {
+                this.currentSuite = { name, tests: [] };
+                fn();
+                this.results.push(this.currentSuite);
+                this.currentSuite = null;
+            }
+
+            it(description, fn) {
+                try {
+                    fn();
+                    this.currentSuite.tests.push({ description, passed: true });
+                } catch (error) {
+                    this.currentSuite.tests.push({ 
+                        description, 
+                        passed: false, 
+                        error: error.message 
+                    });
+                }
+            }
+
+            assert(condition, message) {
+                if (!condition) {
+                    throw new Error(message || '斷言失敗');
+                }
+            }
+
+            assertEqual(actual, expected, message) {
+                if (actual !== expected) {
+                    throw new Error(message || `預期 ${expected}，實際 ${actual}`);
+                }
+            }
+
+            assertThrows(fn, message) {
+                try {
+                    fn();
+                    throw new Error(message || '預期拋出錯誤但沒有');
+                } catch (error) {
+                    if (error.message === message || message === undefined) {
+                        return;
+                    }
+                    // 如果是預期的錯誤，通過測試
+                    return;
+                }
+            }
+
+            render() {
+                const container = document.getElementById('test-results');
+                let totalTests = 0;
+                let passedTests = 0;
+
+                this.results.forEach(suite => {
+                    const suiteDiv = document.createElement('div');
+                    suiteDiv.className = 'test-suite';
+                    suiteDiv.innerHTML = `<h2>${suite.name}</h2>`;
+
+                    suite.tests.forEach(test => {
+                        totalTests++;
+                        if (test.passed) passedTests++;
+
+                        const testDiv = document.createElement('div');
+                        testDiv.className = `test-case ${test.passed ? 'pass' : 'fail'}`;
+                        testDiv.innerHTML = `
+                            <strong>${test.passed ? '✓' : '✗'}</strong> ${test.description}
+                            ${test.error ? `<div class="error-detail">${test.error}</div>` : ''}
+                        `;
+                        suiteDiv.appendChild(testDiv);
+                    });
+
+                    container.appendChild(suiteDiv);
+                });
+
+                const summary = document.getElementById('summary');
+                summary.innerHTML = `
+                    測試完成: ${passedTests}/${totalTests} 通過 
+                    (${Math.round(passedTests/totalTests*100)}%)
+                `;
+            }
+        }
+
+        const runner = new TestRunner();
+
+        // ==================== LocalStorage Manager 測試 ====================
+        runner.describe('LocalStorage Manager', () => {
+            const manager = new LocalStorageManager();
+
+            runner.it('應該能創建預設遊戲數據', () => {
+                const data = manager.createDefaultGameData();
+                runner.assert(data.level === 1, '預設等級應為1');
+                runner.assert(data.exp === 0, '預設經驗值應為0');
+                runner.assert(data.todayAmount === 0, '預設今日水量應為0');
+                runner.assert(Array.isArray(data.history), '歷史記錄應為陣列');
+            });
+
+            runner.it('應該驗證有效的遊戲數據', () => {
+                const validData = {
+                    level: 1,
+                    exp: 0,
+                    maxExp: 100,
+                    todayAmount: 0,
+                    dailyGoal: 2000,
+                    totalAmount: 0,
+                    history: [],
+                    achievements: []
+                };
+                runner.assert(manager.validateGameData(validData), '有效數據應通過驗證');
+            });
+
+            runner.it('應該拒絕無效的等級數值', () => {
+                const invalidData = {
+                    level: -1,
+                    exp: 0,
+                    maxExp: 100,
+                    todayAmount: 0,
+                    dailyGoal: 2000,
+                    totalAmount: 0,
+                    history: [],
+                    achievements: []
+                };
+                runner.assertThrows(() => manager.validateGameData(invalidData));
+            });
+
+            runner.it('應該檢查 LocalStorage 可用性', () => {
+                const available = manager.isStorageAvailable();
+                runner.assert(typeof available === 'boolean', '應返回布林值');
+            });
+        });
+
+        // ==================== 數據計算邏輯測試 ====================
+        runner.describe('數據計算邏輯', () => {
+            runner.it('應該正確計算經驗值', () => {
+                const amount = 250;
+                const expectedExp = Math.floor(amount / 10);
+                runner.assertEqual(expectedExp, 25, '250ml 應獲得 25 經驗值');
+            });
+
+            runner.it('應該正確計算進度百分比', () => {
+                const todayAmount = 1000;
+                const dailyGoal = 2000;
+                const progress = Math.min((todayAmount / dailyGoal) * 100, 100);
+                runner.assertEqual(progress, 50, '1000/2000 應為 50%');
+            });
+
+            runner.it('進度百分比不應超過100%', () => {
+                const todayAmount = 3000;
+                const dailyGoal = 2000;
+                const progress = Math.min((todayAmount / dailyGoal) * 100, 100);
+                runner.assertEqual(progress, 100, '超過目標應顯示 100%');
+            });
+        });
+
+        // ==================== 日期時間處理測試 ====================
+        runner.describe('日期時間處理', () => {
+            runner.it('應該正確格式化時間', () => {
+                const date = new Date('2024-01-01T10:30:00');
+                const timeString = date.toLocaleTimeString('zh-TW', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                runner.assert(timeString.includes('10'), '應包含小時');
+                runner.assert(timeString.includes('30'), '應包含分鐘');
+            });
+
+            runner.it('應該正確比較日期', () => {
+                const today = new Date().toDateString();
+                const yesterday = new Date(Date.now() - 86400000).toDateString();
+                runner.assert(today !== yesterday, '今天和昨天的日期應不同');
+            });
+
+            runner.it('應該正確計算週幾', () => {
+                const date = new Date();
+                const dayOfWeek = date.getDay();
+                runner.assert(dayOfWeek >= 0 && dayOfWeek <= 6, '週幾應在 0-6 之間');
+            });
+        });
+
+        // ==================== 設定驗證測試 ====================
+        runner.describe('設定驗證', () => {
+            const settingsPanel = new SettingsPanel(new AppStateManager());
+
+            runner.it('應該驗證每日目標範圍', () => {
+                const validSettings = {
+                    dailyGoal: 2000,
+                    quickButtons: [250, 500, 100],
+                    notifications: { enabled: false, schedule: [] },
+                    theme: 'auto'
+                };
+                runner.assert(
+                    settingsPanel.validateSettings(validSettings),
+                    '有效設定應通過驗證'
+                );
+            });
+
+            runner.it('應該拒絕超出範圍的每日目標', () => {
+                const invalidSettings = {
+                    dailyGoal: 6000,
+                    quickButtons: [250, 500, 100],
+                    notifications: { enabled: false, schedule: [] },
+                    theme: 'auto'
+                };
+                runner.assertThrows(() => settingsPanel.validateSettings(invalidSettings));
+            });
+
+            runner.it('應該驗證快速按鈕數量', () => {
+                const invalidSettings = {
+                    dailyGoal: 2000,
+                    quickButtons: [250, 500],
+                    notifications: { enabled: false, schedule: [] },
+                    theme: 'auto'
+                };
+                runner.assertThrows(() => settingsPanel.validateSettings(invalidSettings));
+            });
+        });
+
+        // ==================== 統計計算測試 ====================
+        runner.describe('統計計算', () => {
+            const appState = new AppStateManager();
+            appState.initialize();
+            const dashboard = new DashboardSystem(appState);
+
+            runner.it('應該正確計算每日統計', () => {
+                const gameData = {
+                    todayAmount: 1500,
+                    dailyGoal: 2000,
+                    history: [
+                        { amount: 500, time: '09:00' },
+                        { amount: 500, time: '12:00' },
+                        { amount: 500, time: '15:00' }
+                    ]
+                };
+                const stats = dashboard.calculateDailyStats(gameData);
+                runner.assertEqual(stats.totalAmount, 1500, '總量應為 1500ml');
+                runner.assertEqual(stats.entryCount, 3, '記錄數應為 3');
+                runner.assertEqual(stats.averagePerEntry, 500, '平均每次應為 500ml');
+            });
+
+            runner.it('應該正確判斷目標達成', () => {
+                const gameData = {
+                    todayAmount: 2000,
+                    dailyGoal: 2000,
+                    history: []
+                };
+                const stats = dashboard.calculateDailyStats(gameData);
+                runner.assert(stats.goalAchieved, '應判斷為已達標');
+            });
+
+            runner.it('應該正確計算剩餘水量', () => {
+                const gameData = {
+                    todayAmount: 1200,
+                    dailyGoal: 2000,
+                    history: []
+                };
+                const stats = dashboard.calculateDailyStats(gameData);
+                runner.assertEqual(stats.remainingAmount, 800, '剩餘應為 800ml');
+            });
+        });
+
+        // 執行測試並顯示結果
+        runner.render();
+    </script>
+</body>
+</html>

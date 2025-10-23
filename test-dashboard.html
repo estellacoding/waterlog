@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儀表板測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        canvas {
+            border: 1px solid #ddd;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background: #0984e3;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0770c9;
+        }
+    </style>
+</head>
+<body>
+    <h1>📊 儀表板和圖表系統測試</h1>
+    
+    <div class="test-section">
+        <h2>測試 1: 長條圖</h2>
+        <canvas id="barChart" width="800" height="400"></canvas>
+        <button onclick="testBarChart()">繪製長條圖</button>
+    </div>
+
+    <div class="test-section">
+        <h2>測試 2: 折線圖</h2>
+        <canvas id="lineChart" width="800" height="400"></canvas>
+        <button onclick="testLineChart()">繪製折線圖</button>
+    </div>
+
+    <div class="test-section">
+        <h2>測試 3: 圓餅圖</h2>
+        <canvas id="pieChart" width="400" height="400"></canvas>
+        <button onclick="testPieChart()">繪製圓餅圖</button>
+    </div>
+
+    <div class="test-section">
+        <h2>測試 4: 統計計算</h2>
+        <div id="statsOutput"></div>
+        <button onclick="testStats()">計算統計數據</button>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // 等待頁面載入完成
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('測試頁面已載入');
+            console.log('ChartRenderer 可用:', typeof ChartRenderer !== 'undefined');
+            console.log('DashboardSystem 可用:', typeof DashboardSystem !== 'undefined');
+        });
+
+        function testBarChart() {
+            const canvas = document.getElementById('barChart');
+            const renderer = new ChartRenderer();
+            
+            const data = [
+                { label: '週一', value: 1800 },
+                { label: '週二', value: 2200 },
+                { label: '週三', value: 1900 },
+                { label: '週四', value: 2400 },
+                { label: '週五', value: 2100 },
+                { label: '週六', value: 1700 },
+                { label: '週日', value: 2000 }
+            ];
+
+            renderer.drawBarChart(canvas, data, {
+                title: '每週飲水量',
+                yLabel: '水量 (ml)',
+                xLabel: '日期',
+                showValues: true
+            });
+
+            console.log('長條圖已繪製');
+        }
+
+        function testLineChart() {
+            const canvas = document.getElementById('lineChart');
+            const renderer = new ChartRenderer();
+            
+            const data = [
+                { label: '1日', value: 1800 },
+                { label: '2日', value: 2000 },
+                { label: '3日', value: 2200 },
+                { label: '4日', value: 1900 },
+                { label: '5日', value: 2400 },
+                { label: '6日', value: 2300 },
+                { label: '7日', value: 2100 }
+            ];
+
+            renderer.drawLineChart(canvas, data, {
+                title: '飲水趨勢',
+                yLabel: '水量 (ml)',
+                xLabel: '日期',
+                showPoints: true,
+                showArea: true
+            });
+
+            console.log('折線圖已繪製');
+        }
+
+        function testPieChart() {
+            const canvas = document.getElementById('pieChart');
+            const renderer = new ChartRenderer();
+            
+            const data = [
+                { label: '已達標', value: 5 },
+                { label: '未達標', value: 2 }
+            ];
+
+            renderer.drawPieChart(canvas, data, {
+                title: '本週達標率',
+                showLabels: true,
+                showPercentages: true
+            });
+
+            console.log('圓餅圖已繪製');
+        }
+
+        function testStats() {
+            // 初始化應用程式狀態（如果尚未初始化）
+            if (!appState.gameData) {
+                appState.initialize();
+            }
+
+            // 創建儀表板系統
+            const dashboard = new DashboardSystem(appState);
+
+            // 獲取各種統計數據
+            const dailyStats = dashboard.getStats('daily');
+            const weeklyStats = dashboard.getStats('weekly');
+            const monthlyStats = dashboard.getStats('monthly');
+
+            const output = document.getElementById('statsOutput');
+            output.innerHTML = `
+                <h3>每日統計</h3>
+                <pre>${JSON.stringify(dailyStats, null, 2)}</pre>
+                
+                <h3>每週統計</h3>
+                <pre>${JSON.stringify(weeklyStats, null, 2)}</pre>
+                
+                <h3>每月統計</h3>
+                <pre>${JSON.stringify(monthlyStats, null, 2)}</pre>
+            `;
+
+            console.log('統計數據已計算');
+        }
+    </script>
+</body>
+</html>

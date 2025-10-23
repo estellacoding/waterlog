@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>測試數據匯出功能</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #0984e3;
+            color: white;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #0770c9;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 數據匯出與備份功能測試</h1>
+    
+    <div class="test-section">
+        <h2>測試說明</h2>
+        <p>此頁面用於測試數據匯出和備份系統的功能。請按照以下步驟進行測試：</p>
+        <ol>
+            <li>打開主應用程式 (index.html) 並添加一些喝水記錄</li>
+            <li>點擊主應用程式中的「💾 匯出」按鈕</li>
+            <li>測試以下功能：
+                <ul>
+                    <li>匯出 CSV 格式數據</li>
+                    <li>匯出 JSON 格式數據</li>
+                    <li>建立完整備份</li>
+                    <li>從備份還原數據</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>功能檢查清單</h2>
+        <h3>✅ 已實作的功能：</h3>
+        <ul>
+            <li>✅ DataExportSystem 類別已建立</li>
+            <li>✅ CSV 格式匯出功能（包含 BOM 支援中文）</li>
+            <li>✅ JSON 格式匯出功能</li>
+            <li>✅ 日期範圍選擇（7/14/30/60/90天）</li>
+            <li>✅ 完整備份功能（包含遊戲數據、設定、歷史記錄）</li>
+            <li>✅ 從備份還原功能</li>
+            <li>✅ 備份檔案驗證</li>
+            <li>✅ 版本相容性檢查</li>
+            <li>✅ 檔案下載功能</li>
+            <li>✅ 成功訊息顯示</li>
+            <li>✅ 匯出面板 UI</li>
+            <li>✅ 系統初始化整合</li>
+            <li>✅ UI 按鈕整合</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>測試結果</h2>
+        <p>請在主應用程式中測試以下場景：</p>
+        <ol>
+            <li><strong>匯出 CSV：</strong> 檢查檔案是否包含正確的標題和數據，中文是否正常顯示</li>
+            <li><strong>匯出 JSON：</strong> 檢查 JSON 格式是否正確，包含所有必要欄位</li>
+            <li><strong>建立備份：</strong> 檢查備份檔案是否包含完整的遊戲數據、設定和歷史記錄</li>
+            <li><strong>還原備份：</strong> 檢查還原後數據是否正確，頁面是否自動重新載入</li>
+            <li><strong>錯誤處理：</strong> 嘗試上傳無效的備份檔案，檢查錯誤訊息是否正確顯示</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>快速訪問</h2>
+        <button onclick="window.open('index.html', '_blank')">打開主應用程式</button>
+        <button onclick="location.reload()">重新載入此頁面</button>
+    </div>
+
+    <div class="test-section">
+        <h2>需求對照</h2>
+        <h3>Requirement 6.1 - CSV 和 JSON 匯出 ✅</h3>
+        <p>THE Data_Export_System SHALL 提供CSV和JSON兩種格式的數據匯出功能</p>
+        
+        <h3>Requirement 6.2 - 日期範圍選擇 ✅</h3>
+        <p>THE Data_Export_System SHALL 允許使用者選擇匯出日期範圍從7天前到當日</p>
+        
+        <h3>Requirement 6.3 - 完整數據匯出 ✅</h3>
+        <p>THE Data_Export_System SHALL 在匯出檔案中包含完整的時間戳記、水量、經驗值、等級和已解鎖成就清單</p>
+        
+        <h3>Requirement 6.4 - 備份與還原 ✅</h3>
+        <p>THE Data_Export_System SHALL 提供完整應用數據的備份功能和從備份檔案還原功能</p>
+        
+        <h3>Requirement 6.5 - 成功訊息 ✅</h3>
+        <p>WHEN 匯出或備份完成，THE Water_Tracker_App SHALL 顯示成功訊息並自動觸發檔案下載</p>
+    </div>
+</body>
+</html>

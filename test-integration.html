@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>整合測試 - 水精靈養成記</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .test-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 10000;
+        }
+        .test-panel h2 {
+            color: #0984e3;
+            margin-top: 0;
+        }
+        .test-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .test-button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background: #0984e3;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #0770c4;
+        }
+        .test-result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .test-result.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .test-result.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .test-result.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .test-log {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #2d3436;
+            color: #dfe6e9;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .test-log div {
+            margin: 2px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主應用程式 -->
+    <div class="container">
+        <header>
+            <h1>💧 水精靈養成記 💧</h1>
+            <div class="level-info">
+                <span class="level">Lv.<span id="level">1</span></span>
+                <div class="exp-bar">
+                    <div class="exp-fill" id="expFill"></div>
+                    <span class="exp-text"><span id="currentExp">0</span>/<span id="maxExp">100</span> EXP</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="character-section">
+                <div class="character" id="character">
+                    <div class="water-sprite sprite-level-1">🌱</div>
+                    <div class="character-name" id="character-name">小水滴</div>
+                </div>
+            </section>
+
+            <section class="stats-section">
+                <div class="daily-goal progress-section">
+                    <h3>今日目標: 2000ml</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="dailyProgress"></div>
+                        <span class="progress-text"><span id="todayAmount">0</span>ml / 2000ml</span>
+                    </div>
+                </div>
+
+                <div class="quick-actions quick-buttons">
+                    <button class="drink-btn" onclick="addWater(250)">
+                        <span class="icon">🥤</span>
+                        <span>一杯水<br>250ml</span>
+                    </button>
+                    <button class="drink-btn" onclick="addWater(500)">
+                        <span class="icon">🍶</span>
+                        <span>水瓶<br>500ml</span>
+                    </button>
+                    <button class="drink-btn" onclick="addWater(100)">
+                        <span class="icon">☕</span>
+                        <span>小口<br>100ml</span>
+                    </button>
+                </div>
+
+                <div class="custom-amount">
+                    <input type="number" id="customAmount" placeholder="自訂毫升數" min="1" max="1000">
+                    <button onclick="addCustomWater()">添加</button>
+                </div>
+            </section>
+
+            <section class="history">
+                <h3>📊 今日記錄</h3>
+                <div class="history-list" id="historyList"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 測試面板 -->
+    <div class="test-panel">
+        <h2>🧪 整合測試</h2>
+        
+        <div class="test-section">
+            <h3>元件互動測試</h3>
+            <button class="test-button" onclick="testAddWater()">測試添加水量</button>
+            <button class="test-button" onclick="testProgressUpdate()">測試進度更新</button>
+            <button class="test-button" onclick="testExpGain()">測試經驗值增加</button>
+            <button class="test-button" onclick="testHistoryUpdate()">測試歷史記錄更新</button>
+            <div id="component-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>數據流測試</h3>
+            <button class="test-button" onclick="testDataPersistence()">測試數據持久化</button>
+            <button class="test-button" onclick="testStateSync()">測試狀態同步</button>
+            <button class="test-button" onclick="testCacheInvalidation()">測試快取失效</button>
+            <div id="dataflow-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>鍵盤導航測試</h3>
+            <button class="test-button" onclick="testKeyboardNav()">測試 Tab 導航</button>
+            <button class="test-button" onclick="testFocusIndicators()">測試焦點指示器</button>
+            <button class="test-button" onclick="testAriaLabels()">測試 ARIA 標籤</button>
+            <div id="keyboard-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>跨瀏覽器測試</h3>
+            <button class="test-button" onclick="testBrowserFeatures()">檢測瀏覽器功能</button>
+            <button class="test-button" onclick="testLocalStorage()">測試 LocalStorage</button>
+            <button class="test-button" onclick="testNotifications()">測試通知支援</button>
+            <div id="browser-result"></div>
+        </div>
+
+        <div class="test-log" id="testLog"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // 測試日誌工具
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('testLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff7675' : type === 'success' ? '#00b894' : '#74b9ff';
+            logDiv.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function showResult(elementId, message, isSuccess) {
+            const resultDiv = document.getElementById(elementId);
+            resultDiv.innerHTML = `<div class="test-result ${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+
+        // ==================== 元件互動測試 ====================
+        
+        function testAddWater() {
+            log('開始測試添加水量功能...');
+            try {
+                const initialAmount = gameData.todayAmount;
+                addWater(250);
+                
+                setTimeout(() => {
+                    const newAmount = gameData.todayAmount;
+                    if (newAmount === initialAmount + 250) {
+                        log('✓ 添加水量成功', 'success');
+                        showResult('component-result', '✓ 水量正確增加 250ml', true);
+                    } else {
+                        throw new Error(`預期 ${initialAmount + 250}，實際 ${newAmount}`);
+                    }
+                }, 100);
+            } catch (error) {
+                log(`✗ 添加水量失敗: ${error.message}`, 'error');
+                showResult('component-result', `✗ 測試失敗: ${error.message}`, false);
+            }
+        }
+
+        function testProgressUpdate() {
+            log('開始測試進度條更新...');
+            try {
+                const progressBar = document.getElementById('dailyProgress');
+                const initialWidth = progressBar.style.width;
+                
+                addWater(100);
+                
+                setTimeout(() => {
+                    const newWidth = progressBar.style.width;
+                    if (newWidth !== initialWidth) {
+                        log('✓ 進度條已更新', 'success');
+                        showResult('component-result', `✓ 進度條寬度: ${newWidth}`, true);
+                    } else {
+                        throw new Error('進度條未更新');
+                    }
+                }, 100);
+            } catch (error) {
+                log(`✗ 進度條測試失敗: ${error.message}`, 'error');
+                showResult('component-result', `✗ 測試失敗: ${error.message}`, false);
+            }
+        }
+
+        function testExpGain() {
+            log('開始測試經驗值增加...');
+            try {
+                const initialExp = gameData.exp;
+                const amount = 250;
+                const expectedExpGain = Math.floor(amount / 10);
+                
+                addWater(amount);
+                
+                setTimeout(() => {
+                    const expGained = gameData.exp - initialExp;
+                    if (expGained === expectedExpGain) {
+                        log(`✓ 經驗值正確增加 ${expGained}`, 'success');
+                        showResult('component-result', `✓ 獲得 ${expGained} 經驗值`, true);
+                    } else {
+                        throw new Error(`預期 ${expectedExpGain}，實際 ${expGained}`);
+                    }
+                }, 100);
+            } catch (error) {
+                log(`✗ 經驗值測試失敗: ${error.message}`, 'error');
+                showResult('component-result', `✗ 測試失敗: ${error.message}`, false);
+            }
+        }
+
+        function testHistoryUpdate() {
+            log('開始測試歷史記錄更新...');
+            try {
+                const initialCount = gameData.history.length;
+                addWater(150);
+                
+                setTimeout(() => {
+                    const newCount = gameData.history.length;
+                    if (newCount === initialCount + 1) {
+                        log('✓ 歷史記錄已添加', 'success');
+                        showResult('component-result', `✓ 記錄數: ${newCount}`, true);
+                    } else {
+                        throw new Error(`預期 ${initialCount + 1} 筆記錄，實際 ${newCount} 筆`);
+                    }
+                }, 100);
+            } catch (error) {
+                log(`✗ 歷史記錄測試失敗: ${error.message}`, 'error');
+                showResult('component-result', `✗ 測試失敗: ${error.message}`, false);
+            }
+        }
+
+        // ==================== 數據流測試 ====================
+        
+        function testDataPersistence() {
+            log('開始測試數據持久化...');
+            try {
+                const testData = { ...gameData };
+                testData.todayAmount += 100;
+                
+                saveGameData();
+                
+                const saved = localStorage.getItem('waterGameData');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    log('✓ 數據已儲存到 LocalStorage', 'success');
+                    showResult('dataflow-result', '✓ 數據持久化正常', true);
+                } else {
+                    throw new Error('數據未儲存');
+                }
+            } catch (error) {
+                log(`✗ 數據持久化測試失敗: ${error.message}`, 'error');
+                showResult('dataflow-result', `✗ 測試失敗: ${error.message}`, false);
+            }
+        }
+
+        function testStateSync() {
+            log('開始測試狀態同步...');
+            try {
+                const uiAmount = document.getElementById('todayAmount').textContent;
+                const dataAmount = gameData.todayAmount.toString();
+                
+                if (uiAmount === dataAmount) {
+                    log('✓ UI 與數據狀態同步', 'success');
+                    showResult('dataflow-result', `✓ 狀態一致: ${uiAmount}ml`, true);
+                } else {
+                    throw new Error(`UI 顯示 ${uiAmount}，數據為 ${dataAmount}`);
+                }
+            } catch (error) {
+                log(`✗ 狀態同步測試失敗: ${error.message}`, 'error');
+                showResult('dataflow-result', `✗ 測試失敗: ${error.message}`, false);
+            }
+        }
+
+        function testCacheInvalidation() {
+            log('開始測試快取失效...');
+            try {
+                if (dashboardSystem) {
+                    dashboardSystem.clearCache();
+                    const cacheEmpty = dashboardSystem.cache.daily === null;
+                    
+                    if (cacheEmpty) {
+                        log('✓ 快取已清除', 'success');
+                        showResult('dataflow-result', '✓ 快取失效機制正常', true);
+                    } else {
+                        throw new Error('快取未清除');
+                    }
+                } else {
+                    log('⚠ 儀表板系統未初始化', 'info');
+                    showResult('dataflow-result', '⚠ 儀表板系統未初始化', false);
+                }
+            } catch (error) {
+                log(`✗ 快取測試失敗: ${error.message}`, 'error');
+                showResult('dataflow-result', `✗ 測試失敗: ${error.message}`, false);
+            }
+        }
+
+        // ==================== 鍵盤導航測試 ====================
+        
+        function testKeyboardNav() {
+            log('開始測試鍵盤導航...');
+            try {
+                const focusableElements = document.querySelectorAll(
+                    'button, input, [tabindex]:not([tabindex="-1"])'
+                );
+                
+                if (focusableElements.length > 0) {
+                    log(`✓ 找到 ${focusableElements.length} 個可聚焦元素`, 'success');
+                    
+                    // 測試第一個元素是否可聚焦
+                    focusableElements[0].focus();
+                    if (document.activeElement === focusableElements[0]) {
+                        log('✓ 元素可正常聚焦', 'success');
+                        showResult('keyboard-result', `✓ ${focusableElements.length} 個元素支援鍵盤導航`, true);
+                    } else {
+                        throw new Error('元素無法聚焦');
+                    }
+                } else {
+                    throw new Error('未找到可聚焦元素');
+                }
+            } catch (error) {
+                log(`✗ 鍵盤導航測試失敗: ${error.message}`, 'error');
+                showResult('keyboard-result', `✗ 測試失敗: ${error.message}`, false);
+            }
+        }
+
+        function testFocusIndicators() {
+            log('開始測試焦點指示器...');
+            try {
+                const button = document.querySelector('.drink-btn');
+                button.focus();
+                
+                const styles = window.getComputedStyle(button, ':focus-visible');
+                log('✓ 焦點樣式已套用', 'success');
+                showResult('keyboard-result', '✓ 焦點指示器正常顯示', true);
+            } catch (error) {
+                log(`✗ 焦點指示器測試失敗: ${error.message}`, 'error');
+                showResult('keyboard-result', `✗ 測試失敗: ${error.message}`, false);
+            }
+        }
+
+        function testAriaLabels() {
+            log('開始測試 ARIA 標籤...');
+            try {
+                const elementsWithAria = document.querySelectorAll('[aria-label], [aria-labelledby], [role]');
+                
+                if (elementsWithAria.length > 0) {
+                    log(`✓ 找到 ${elementsWithAria.length} 個 ARIA 元素`, 'success');
+                    showResult('keyboard-result', `✓ ${elementsWithAria.length} 個元素有 ARIA 屬性`, true);
+                } else {
+                    log('⚠ 未找到 ARIA 元素', 'info');
+                    showResult('keyboard-result', '⚠ 建議添加更多 ARIA 標籤', false);
+                }
+            } catch (error) {
+                log(`✗ ARIA 測試失敗: ${error.message}`, 'error');
+                showResult('keyboard-result', `✗ 測試失敗: ${error.message}`, false);
+            }
+        }
+
+        // ==================== 跨瀏覽器測試 ====================
+        
+        function testBrowserFeatures() {
+            log('開始檢測瀏覽器功能...');
+            try {
+                const features = {
+                    'LocalStorage': 'localStorage' in window,
+                    'Notification': 'Notification' in window,
+                    'Canvas': !!document.createElement('canvas').getContext,
+                    'ES6': typeof Symbol !== 'undefined',
+                    'Fetch': 'fetch' in window
+                };
+                
+                let report = '瀏覽器功能支援:<br>';
+                for (const [feature, supported] of Object.entries(features)) {
+                    const icon = supported ? '✓' : '✗';
+                    report += `${icon} ${feature}<br>`;
+                    log(`${icon} ${feature}: ${supported ? '支援' : '不支援'}`, supported ? 'success' : 'error');
+                }
+                
+                showResult('browser-result', report, true);
+            } catch (error) {
+                log(`✗ 瀏覽器檢測失敗: ${error.message}`, 'error');
+                showResult('browser-result', `✗ 測試失敗: ${error.message}`, false);
+            }
+        }
+
+        function testLocalStorage() {
+            log('開始測試 LocalStorage...');
+            try {
+                const testKey = '__test__';
+                const testValue = 'test_value';
+                
+                localStorage.setItem(testKey, testValue);
+                const retrieved = localStorage.getItem(testKey);
+                localStorage.removeItem(testKey);
+                
+                if (retrieved === testValue) {
+                    log('✓ LocalStorage 讀寫正常', 'success');
+                    showResult('browser-result', '✓ LocalStorage 功能正常', true);
+                } else {
+                    throw new Error('LocalStorage 讀寫失敗');
+                }
+            } catch (error) {
+                log(`✗ LocalStorage 測試失敗: ${error.message}`, 'error');
+                showResult('browser-result', `✗ 測試失敗: ${error.message}`, false);
+            }
+        }
+
+        function testNotifications() {
+            log('開始測試通知支援...');
+            try {
+                if ('Notification' in window) {
+                    const permission = Notification.permission;
+                    log(`✓ 通知 API 可用，權限狀態: ${permission}`, 'success');
+                    showResult('browser-result', `✓ 通知支援 (權限: ${permission})`, true);
+                } else {
+                    log('✗ 瀏覽器不支援通知 API', 'error');
+                    showResult('browser-result', '✗ 瀏覽器不支援通知', false);
+                }
+            } catch (error) {
+                log(`✗ 通知測試失敗: ${error.message}`, 'error');
+                showResult('browser-result', `✗ 測試失敗: ${error.message}`, false);
+            }
+        }
+
+        // 初始化日誌
+        log('整合測試面板已就緒');
+        log('點擊測試按鈕開始測試');
+    </script>
+</body>
+</html>

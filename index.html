@@ -3,80 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="水精靈養成記 - 遊戲化的飲水追蹤應用程式，幫助您養成健康的飲水習慣">
     <title>水精靈養成記 💧</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body role="application">
+    <!-- 跳過導航連結（無障礙功能） -->
+    <a href="#main-content" class="sr-only sr-only-focusable" style="position: absolute; top: 10px; left: 10px; z-index: 10000; background: #0984e3; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+        跳至主要內容
+    </a>
+    
     <div class="container">
-        <header>
-            <h1>💧 水精靈養成記 💧</h1>
-            <div class="level-info">
-                <span class="level">Lv.<span id="level">1</span></span>
-                <div class="exp-bar">
+        <header role="banner">
+            <h1 id="app-title">💧 水精靈養成記 💧</h1>
+            <div class="level-info" role="status" aria-live="polite" aria-atomic="true">
+                <span class="level" aria-label="目前等級">Lv.<span id="level">1</span></span>
+                <div class="exp-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="經驗值進度">
                     <div class="exp-fill" id="expFill"></div>
                     <span class="exp-text"><span id="currentExp">0</span>/<span id="maxExp">100</span> EXP</span>
                 </div>
             </div>
+            <nav aria-label="主要功能選單" style="margin-top: 10px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button onclick="showDashboard()" class="dashboard-btn" title="統計儀表板" aria-label="開啟統計儀表板">
+                    <span aria-hidden="true">📊</span> 統計
+                </button>
+                <button onclick="showExportPanel()" class="export-btn" title="數據匯出與備份" aria-label="開啟數據匯出與備份功能">
+                    <span aria-hidden="true">💾</span> 匯出
+                </button>
+                <button onclick="restartOnboarding()" class="help-btn" title="重新觀看導覽" aria-label="重新觀看使用說明導覽">
+                    <span aria-hidden="true">❓</span> 使用說明
+                </button>
+                <button onclick="showSettings()" class="settings-btn" title="設定" aria-label="開啟應用程式設定">
+                    <span aria-hidden="true">⚙️</span> 設定
+                </button>
+            </nav>
         </header>
 
-        <main>
-            <div class="character-section">
-                <div class="character" id="character">
-                    <div class="water-sprite sprite-level-1">🌱</div>
-                    <div class="character-name">小水滴</div>
+        <main role="main" id="main-content" tabindex="-1">
+            <section class="character-section" aria-labelledby="character-title">
+                <h2 id="character-title" class="sr-only">水精靈角色</h2>
+                <div class="character" id="character" role="img" aria-label="水精靈角色：小水滴，等級1">
+                    <div class="water-sprite sprite-level-1" aria-hidden="true">🌱</div>
+                    <div class="character-name" id="character-name">小水滴</div>
                 </div>
-            </div>
+            </section>
 
-            <div class="stats-section">
-                <div class="daily-goal">
-                    <h3>今日目標: 2000ml</h3>
-                    <div class="progress-bar">
+            <section class="stats-section" aria-labelledby="stats-title">
+                <h2 id="stats-title" class="sr-only">飲水統計與記錄</h2>
+                <div class="daily-goal progress-section">
+                    <h3 id="daily-goal-title">今日目標: 2000ml</h3>
+                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="2000" aria-labelledby="daily-goal-title" aria-live="polite">
                         <div class="progress-fill" id="dailyProgress"></div>
                         <span class="progress-text"><span id="todayAmount">0</span>ml / 2000ml</span>
                     </div>
                 </div>
 
-                <div class="quick-actions">
-                    <button class="drink-btn" onclick="addWater(250)">
-                        <span class="icon">🥤</span>
+                <div class="quick-actions quick-buttons" role="group" aria-label="快速添加水量按鈕">
+                    <button class="drink-btn" onclick="addWater(250)" aria-label="添加一杯水 250毫升">
+                        <span class="icon" aria-hidden="true">🥤</span>
                         <span>一杯水<br>250ml</span>
                     </button>
-                    <button class="drink-btn" onclick="addWater(500)">
-                        <span class="icon">🍶</span>
+                    <button class="drink-btn" onclick="addWater(500)" aria-label="添加水瓶 500毫升">
+                        <span class="icon" aria-hidden="true">🍶</span>
                         <span>水瓶<br>500ml</span>
                     </button>
-                    <button class="drink-btn" onclick="addWater(100)">
-                        <span class="icon">☕</span>
+                    <button class="drink-btn" onclick="addWater(100)" aria-label="添加小口 100毫升">
+                        <span class="icon" aria-hidden="true">☕</span>
                         <span>小口<br>100ml</span>
                     </button>
                 </div>
 
-                <div class="custom-amount">
-                    <input type="number" id="customAmount" placeholder="自訂毫升數" min="1" max="1000">
-                    <button onclick="addCustomWater()">添加</button>
+                <div class="custom-amount" role="group" aria-label="自訂水量輸入">
+                    <label for="customAmount" class="sr-only">自訂毫升數（1到1000毫升）</label>
+                    <input type="number" id="customAmount" placeholder="自訂毫升數" min="1" max="1000" aria-describedby="custom-amount-hint">
+                    <button onclick="addCustomWater()" aria-label="添加自訂水量">添加</button>
+                    <span id="custom-amount-hint" class="sr-only">請輸入1到1000之間的毫升數</span>
                 </div>
-            </div>
+                
+                <div class="time-selection" style="margin-top: 15px; text-align: center;">
+                    <label style="display: flex; align-items: center; justify-content: center; gap: 8px; color: #666; font-size: 0.9em; cursor: pointer;">
+                        <input type="checkbox" id="useCustomTime" style="cursor: pointer;" aria-describedby="custom-time-desc">
+                        <span>自訂時間</span>
+                    </label>
+                    <span id="custom-time-desc" class="sr-only">勾選以自訂記錄時間</span>
+                    <div id="customTimeContainer" style="display: none; margin-top: 10px;">
+                        <label for="customTime" class="sr-only">選擇記錄時間</label>
+                        <input type="time" id="customTime" style="padding: 8px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em;" aria-describedby="custom-time-hint">
+                        <p id="custom-time-hint" style="margin: 4px 0 0 0; color: #999; font-size: 0.85em;">只能選擇今天的時間</p>
+                    </div>
+                </div>
+            </section>
 
-            <div class="achievements">
-                <h3>🏆 成就系統</h3>
-                <div class="achievement-list" id="achievementList">
+            <section class="achievements" aria-labelledby="achievements-title">
+                <h3 id="achievements-title"><span aria-hidden="true">🏆</span> 成就系統</h3>
+                <div class="achievement-list" id="achievementList" role="list" aria-live="polite">
                     <!-- 成就會動態生成 -->
                 </div>
-            </div>
+            </section>
 
-            <div class="history">
-                <h3>📊 今日記錄</h3>
-                <div class="history-list" id="historyList">
+            <section class="history" aria-labelledby="history-title">
+                <h3 id="history-title"><span aria-hidden="true">📊</span> 今日記錄</h3>
+                <div class="history-list" id="historyList" role="list" aria-live="polite" aria-atomic="false">
                     <!-- 記錄會動態生成 -->
                 </div>
-            </div>
+            </section>
         </main>
     </div>
 
-    <div class="celebration" id="celebration">
+    <div class="celebration" id="celebration" role="dialog" aria-modal="true" aria-labelledby="celebration-text">
         <div class="celebration-content">
-            <div class="celebration-text" id="celebrationText"></div>
-            <div class="celebration-emoji">🎉</div>
+            <div class="celebration-text" id="celebrationText" role="status" aria-live="assertive"></div>
+            <div class="celebration-emoji" aria-hidden="true">🎉</div>
         </div>
     </div>
 

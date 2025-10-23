@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>無障礙功能測試 - 水精靈養成記</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #0984e3;
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #0984e3;
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+        }
+        .pass {
+            color: #00b894;
+            font-weight: bold;
+        }
+        .fail {
+            color: #d63031;
+            font-weight: bold;
+        }
+        kbd {
+            background: #333;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 無障礙功能測試清單</h1>
+    
+    <div class="test-section">
+        <h2>1. 鍵盤導航測試</h2>
+        <div class="test-item">
+            <input type="checkbox" id="test1-1">
+            <label for="test1-1">使用 <kbd>Tab</kbd> 鍵可以瀏覽所有互動元素</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test1-2">
+            <label for="test1-2"><kbd>Alt</kbd> + <kbd>1</kbd> 可以快速添加 250ml</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test1-3">
+            <label for="test1-3"><kbd>Alt</kbd> + <kbd>2</kbd> 可以快速添加 500ml</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test1-4">
+            <label for="test1-4"><kbd>Alt</kbd> + <kbd>3</kbd> 可以快速添加 100ml</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test1-5">
+            <label for="test1-5"><kbd>Alt</kbd> + <kbd>S</kbd> 可以開啟設定面板</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test1-6">
+            <label for="test1-6"><kbd>Alt</kbd> + <kbd>D</kbd> 可以開啟統計儀表板</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test1-7">
+            <label for="test1-7"><kbd>Escape</kbd> 可以關閉模態對話框</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test1-8">
+            <label for="test1-8">焦點指示器清晰可見（藍色外框）</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 動畫效果測試</h2>
+        <div class="test-item">
+            <input type="checkbox" id="test2-1">
+            <label for="test2-1">進度條填充時有平滑動畫</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test2-2">
+            <label for="test2-2">達成目標時進度條有發光效果</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test2-3">
+            <label for="test2-3">等級提升時有彈跳和發光動畫</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test2-4">
+            <label for="test2-4">角色進化時有旋轉和縮放動畫</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test2-5">
+            <label for="test2-5">添加水量時按鈕有點擊反饋</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test2-6">
+            <label for="test2-6">歷史記錄列表有交錯淡入動畫</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test2-7">
+            <label for="test2-7">模態對話框有滑入動畫</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. ARIA 和螢幕閱讀器測試</h2>
+        <div class="test-item">
+            <input type="checkbox" id="test3-1">
+            <label for="test3-1">所有按鈕都有 aria-label 或適當的文字</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test3-2">
+            <label for="test3-2">進度條有 role="progressbar" 和 aria-valuenow</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test3-3">
+            <label for="test3-3">狀態更新區域有 aria-live="polite"</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test3-4">
+            <label for="test3-4">裝飾性圖示標記為 aria-hidden="true"</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test3-5">
+            <label for="test3-5">模態對話框有 role="dialog" 和 aria-modal="true"</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test3-6">
+            <label for="test3-6">使用螢幕閱讀器可以正確讀取所有內容</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. 觸控和行動裝置測試</h2>
+        <div class="test-item">
+            <input type="checkbox" id="test4-1">
+            <label for="test4-1">所有按鈕至少 44x44px</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test4-2">
+            <label for="test4-2">按鈕之間有足夠的間距</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test4-3">
+            <label for="test4-3">在手機上易於點擊和操作</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test4-4">
+            <label for="test4-4">響應式設計在不同螢幕尺寸下正常</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. 減少動畫偏好測試</h2>
+        <div class="test-item">
+            <input type="checkbox" id="test5-1">
+            <label for="test5-1">在系統設定中啟用「減少動畫」</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test5-2">
+            <label for="test5-2">確認動畫被縮短或禁用</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test5-3">
+            <label for="test5-3">應用程式仍然可用且功能正常</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>6. 高對比度模式測試</h2>
+        <div class="test-item">
+            <input type="checkbox" id="test6-1">
+            <label for="test6-1">在高對比度模式下文字清晰可讀</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test6-2">
+            <label for="test6-2">焦點指示器在高對比度模式下更明顯</label>
+        </div>
+        <div class="test-item">
+            <input type="checkbox" id="test6-3">
+            <label for="test6-3">所有互動元素都有清晰的邊框</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>測試工具建議</h2>
+        <ul>
+            <li><strong>螢幕閱讀器：</strong>
+                <ul>
+                    <li>Windows: NVDA (免費) 或 JAWS</li>
+                    <li>Mac: VoiceOver (內建)</li>
+                    <li>Chrome: ChromeVox 擴充功能</li>
+                </ul>
+            </li>
+            <li><strong>無障礙檢查工具：</strong>
+                <ul>
+                    <li>Chrome DevTools Lighthouse</li>
+                    <li>axe DevTools 擴充功能</li>
+                    <li>WAVE 評估工具</li>
+                </ul>
+            </li>
+            <li><strong>鍵盤測試：</strong>
+                <ul>
+                    <li>只使用鍵盤（不使用滑鼠）完成所有操作</li>
+                    <li>確認 Tab 順序合理</li>
+                    <li>測試所有快捷鍵</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>測試結果</h2>
+        <p>完成所有測試項目後，請記錄結果：</p>
+        <button onclick="calculateResults()" style="padding: 10px 20px; background: #0984e3; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
+            計算測試結果
+        </button>
+        <div id="results" style="margin-top: 20px; font-size: 18px;"></div>
+    </div>
+
+    <script>
+        function calculateResults() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const total = checkboxes.length;
+            const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const percentage = Math.round((checked / total) * 100);
+            
+            const resultsDiv = document.getElementById('results');
+            let status = '';
+            let color = '';
+            
+            if (percentage === 100) {
+                status = '完美！所有測試都通過了！🎉';
+                color = '#00b894';
+            } else if (percentage >= 80) {
+                status = '很好！大部分測試都通過了！👍';
+                color = '#00b894';
+            } else if (percentage >= 60) {
+                status = '不錯，但還有改進空間。';
+                color = '#fdcb6e';
+            } else {
+                status = '需要更多改進。';
+                color = '#d63031';
+            }
+            
+            resultsDiv.innerHTML = `
+                <div style="padding: 20px; background: white; border-radius: 8px; border-left: 4px solid ${color};">
+                    <div style="font-size: 24px; font-weight: bold; color: ${color}; margin-bottom: 10px;">
+                        ${checked} / ${total} 項測試通過 (${percentage}%)
+                    </div>
+                    <div style="color: #666;">
+                        ${status}
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

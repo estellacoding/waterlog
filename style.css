@@ -4,32 +4,228 @@
     box-sizing: border-box;
 }
 
+/* 螢幕閱讀器專用類別 */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}
+
+/* 鍵盤導航焦點樣式 */
+*:focus-visible {
+    outline: 3px solid #0984e3;
+    outline-offset: 2px;
+}
+
+button:focus-visible {
+    outline: 3px solid currentColor;
+    outline-offset: 2px;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid #0984e3;
+    outline-offset: 2px;
+}
+
+/* 移除滑鼠點擊時的焦點外框 */
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+:root {
+    /* 淺色主題變數 */
+    --bg-gradient-start: #74b9ff;
+    --bg-gradient-end: #0984e3;
+    --text-primary: #2d3436;
+    --text-secondary: #636e72;
+    --card-bg: rgba(255, 255, 255, 0.98);
+    --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+    --card-shadow-hover: 0 15px 50px rgba(0, 0, 0, 0.18);
+    --card-shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.08);
+    --border-color: #e8ecef;
+    --input-bg: white;
+    --progress-bg: #e8ecef;
+    --achievement-bg: #f8f9fa;
+    --border-radius-sm: 12px;
+    --border-radius-md: 16px;
+    --border-radius-lg: 20px;
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 20px;
+    --spacing-lg: 30px;
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
 body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #74b9ff, #0984e3);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+    background-attachment: fixed;
     min-height: 100vh;
+    color: var(--text-primary);
+    transition: background var(--transition-normal), color var(--transition-normal);
+    line-height: 1.6;
+}
+
+/* 深色主題 */
+body.dark-theme {
+    --bg-gradient-start: #1a1d23;
+    --bg-gradient-end: #0a0c10;
+    --text-primary: #e8ecef;
+    --text-secondary: #b2bec3;
+    --card-bg: rgba(30, 35, 42, 0.98);
+    --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    --card-shadow-hover: 0 15px 50px rgba(0, 0, 0, 0.6);
+    --card-shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.3);
+    --border-color: #3a4149;
+    --input-bg: #252a32;
+    --progress-bg: #3a4149;
+    --achievement-bg: #252a32;
+}
+
+body.dark-theme .container {
+    color: var(--text-primary);
+}
+
+body.dark-theme header,
+body.dark-theme .character-section,
+body.dark-theme .stats-section,
+body.dark-theme .achievements,
+body.dark-theme .history {
+    background: var(--card-bg);
+    color: var(--text-primary);
+}
+
+body.dark-theme h1,
+body.dark-theme h3,
+body.dark-theme .character-name {
+    color: #74b9ff;
+}
+
+body.dark-theme .custom-amount input {
+    background: var(--input-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+body.dark-theme .progress-bar,
+body.dark-theme .exp-bar {
+    background: var(--progress-bg);
+}
+
+body.dark-theme .achievement-item {
+    background: var(--achievement-bg);
+    color: var(--text-primary);
+}
+
+body.dark-theme .history-item {
+    border-bottom-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+body.dark-theme .level {
+    background: #fdcb6e;
     color: #2d3436;
 }
 
+body.dark-theme .exp-text,
+body.dark-theme .progress-text {
+    color: var(--text-primary);
+}
+
 .container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 20px;
+    padding: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+    .container {
+        padding: var(--spacing-lg);
+    }
 }
 
 header {
     text-align: center;
-    margin-bottom: 30px;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin-bottom: var(--spacing-lg);
+    background: var(--card-bg);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(10px);
+    transition: box-shadow var(--transition-normal);
+}
+
+header:hover {
+    box-shadow: var(--card-shadow-hover);
+}
+
+.help-btn, .settings-btn, .dashboard-btn, .export-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: all var(--transition-normal);
+    box-shadow: var(--card-shadow-sm);
+    min-height: 44px;
+    min-width: 44px;
+}
+
+.help-btn:hover, .settings-btn:hover, .dashboard-btn:hover, .export-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.help-btn:active, .settings-btn:active, .dashboard-btn:active, .export-btn:active {
+    transform: translateY(-1px);
+}
+
+.help-btn:focus, .settings-btn:focus, .dashboard-btn:focus, .export-btn:focus {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+}
+
+.settings-btn {
+    background: linear-gradient(135deg, #00cec9, #00b894);
+}
+
+.dashboard-btn {
+    background: linear-gradient(135deg, #fd79a8, #e84393);
+}
+
+.export-btn {
+    background: linear-gradient(135deg, #fdcb6e, #e17055);
 }
 
 h1 {
     color: #0984e3;
-    margin-bottom: 15px;
-    font-size: 2.5em;
+    margin-bottom: var(--spacing-md);
+    font-size: clamp(1.8em, 5vw, 2.5em);
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
 .level-info {
@@ -41,29 +237,55 @@ h1 {
 }
 
 .level {
-    background: #fdcb6e;
+    background: linear-gradient(135deg, #fdcb6e, #f39c12);
     color: #2d3436;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: var(--border-radius-lg);
+    font-weight: 700;
     font-size: 1.2em;
+    box-shadow: var(--card-shadow-sm);
+    transition: all var(--transition-normal);
+}
+
+.level:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(253, 203, 110, 0.4);
 }
 
 .exp-bar {
     position: relative;
-    background: #ddd;
-    height: 25px;
-    width: 200px;
-    border-radius: 15px;
+    background: var(--progress-bg);
+    height: 32px;
+    width: 220px;
+    border-radius: var(--border-radius-lg);
     overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .exp-fill {
     background: linear-gradient(90deg, #00b894, #00cec9);
     height: 100%;
     width: 0%;
-    transition: width 0.5s ease;
-    border-radius: 15px;
+    transition: width var(--transition-slow);
+    border-radius: var(--border-radius-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.exp-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
 
 .exp-text {
@@ -78,15 +300,28 @@ h1 {
 
 main {
     display: grid;
-    gap: 20px;
+    gap: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+    main {
+        gap: var(--spacing-lg);
+    }
 }
 
 .character-section {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 30px;
-    border-radius: 15px;
+    background: var(--card-bg);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
     text-align: center;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-normal);
+}
+
+.character-section:hover {
+    box-shadow: var(--card-shadow-hover);
+    transform: translateY(-2px);
 }
 
 .character {
@@ -95,13 +330,15 @@ main {
 
 .water-sprite {
     font-size: 4em;
-    margin-bottom: 10px;
-    transition: all 0.3s ease;
+    margin-bottom: var(--spacing-sm);
+    transition: all var(--transition-normal);
     cursor: pointer;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
 
 .water-sprite:hover {
-    transform: scale(1.1);
+    transform: scale(1.15) rotate(5deg);
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
 }
 
 .sprite-level-1 { font-size: 3em; }
@@ -117,33 +354,55 @@ main {
 }
 
 .stats-section {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    background: var(--card-bg);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-normal);
+}
+
+.stats-section:hover {
+    box-shadow: var(--card-shadow-hover);
 }
 
 .daily-goal h3 {
-    margin-bottom: 15px;
+    margin-bottom: var(--spacing-md);
     color: #0984e3;
     text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
 }
 
 .progress-bar {
     position: relative;
-    background: #ddd;
-    height: 30px;
-    border-radius: 15px;
+    background: var(--progress-bg);
+    height: 36px;
+    border-radius: var(--border-radius-lg);
     overflow: hidden;
-    margin-bottom: 25px;
+    margin-bottom: var(--spacing-lg);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .progress-fill {
     background: linear-gradient(90deg, #74b9ff, #0984e3);
     height: 100%;
     width: 0%;
-    transition: width 0.5s ease;
-    border-radius: 15px;
+    transition: width var(--transition-slow);
+    border-radius: var(--border-radius-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
 }
 
 .progress-text {
@@ -157,104 +416,246 @@ main {
 
 .quick-actions {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+@media (max-width: 480px) {
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
 }
 
 .drink-btn {
     background: linear-gradient(135deg, #00cec9, #00b894);
     border: none;
-    padding: 20px;
-    border-radius: 15px;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
     color: white;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
     text-align: center;
+    box-shadow: var(--card-shadow-sm);
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .drink-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 206, 201, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 206, 201, 0.4);
+}
+
+.drink-btn:active {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 206, 201, 0.3);
+}
+
+.drink-btn:focus {
+    outline: 3px solid #00cec9;
+    outline-offset: 2px;
 }
 
 .drink-btn .icon {
     display: block;
-    font-size: 2em;
-    margin-bottom: 5px;
+    font-size: 2.5em;
+    margin-bottom: var(--spacing-xs);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .custom-amount {
     display: flex;
-    gap: 10px;
+    gap: var(--spacing-sm);
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .custom-amount input {
-    padding: 10px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-md);
     font-size: 1em;
-    width: 150px;
+    width: 160px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+    box-shadow: var(--card-shadow-sm);
+    min-height: 44px;
+}
+
+.custom-amount input:focus {
+    outline: none;
+    border-color: #0984e3;
+    box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.1);
 }
 
 .custom-amount button {
-    background: #e17055;
+    background: linear-gradient(135deg, #e17055, #d63031);
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 12px 24px;
+    border-radius: var(--border-radius-md);
     cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s ease;
+    font-weight: 600;
+    transition: all var(--transition-normal);
+    box-shadow: var(--card-shadow-sm);
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .custom-amount button:hover {
-    background: #d63031;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(225, 112, 85, 0.4);
+}
+
+.custom-amount button:active {
+    transform: translateY(0);
+}
+
+.custom-amount button:focus {
+    outline: 3px solid #e17055;
+    outline-offset: 2px;
+}
+
+.time-selection {
+    margin-top: var(--spacing-md);
+    text-align: center;
+}
+
+.time-selection label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    color: var(--text-secondary);
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+    padding: var(--spacing-xs);
+    border-radius: var(--border-radius-sm);
+}
+
+.time-selection label:hover {
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.02);
+}
+
+body.dark-theme .time-selection label:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.time-selection input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #0984e3;
+}
+
+.time-selection input[type="time"] {
+    padding: 10px 14px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    font-size: 1em;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+    box-shadow: var(--card-shadow-sm);
+    min-height: 44px;
+}
+
+.time-selection input[type="time"]:focus {
+    outline: none;
+    border-color: #0984e3;
+    box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.1);
 }
 
 .achievements, .history {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    background: var(--card-bg);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-normal);
+}
+
+.achievements:hover, .history:hover {
+    box-shadow: var(--card-shadow-hover);
 }
 
 .achievements h3, .history h3 {
-    margin-bottom: 15px;
+    margin-bottom: var(--spacing-md);
     color: #0984e3;
     text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
 }
 
 .achievement-item {
     display: flex;
     align-items: center;
-    padding: 10px;
-    margin: 5px 0;
-    background: #f8f9fa;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    padding: var(--spacing-md);
+    margin: var(--spacing-xs) 0;
+    background: var(--achievement-bg);
+    border-radius: var(--border-radius-md);
+    transition: all var(--transition-normal);
+    box-shadow: var(--card-shadow-sm);
+    min-height: 60px;
+}
+
+.achievement-item:hover {
+    transform: translateX(4px);
+}
+
+.achievement-item:focus-within {
+    outline: 2px solid #0984e3;
+    outline-offset: 2px;
 }
 
 .achievement-item.unlocked {
     background: linear-gradient(135deg, #fdcb6e, #e17055);
     color: white;
     transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(253, 203, 110, 0.4);
+}
+
+.achievement-item.unlocked:hover {
+    transform: scale(1.04) translateX(4px);
 }
 
 .achievement-icon {
-    font-size: 1.5em;
-    margin-right: 10px;
+    font-size: 1.8em;
+    margin-right: var(--spacing-md);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    min-width: 40px;
+    text-align: center;
 }
 
 .history-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
+    padding: var(--spacing-md);
+    margin: var(--spacing-xs) 0;
+    border-radius: var(--border-radius-sm);
+    background: var(--achievement-bg);
+    transition: all var(--transition-fast);
+    min-height: 60px;
+}
+
+.history-item:hover {
+    background: var(--border-color);
+    transform: translateX(4px);
+}
+
+.history-item:focus-within {
+    outline: 2px solid #0984e3;
+    outline-offset: 2px;
+    background: var(--border-color);
 }
 
 .celebration {
@@ -263,48 +664,992 @@ main {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
     display: none;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    animation: fadeIn 0.3s ease;
 }
 
 .celebration-content {
-    background: white;
-    padding: 40px;
-    border-radius: 20px;
+    background: var(--card-bg);
+    padding: var(--spacing-lg) 50px;
+    border-radius: var(--border-radius-lg);
     text-align: center;
-    animation: celebrationPop 0.5s ease;
+    animation: celebrationPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 90%;
 }
 
 .celebration-text {
-    font-size: 1.5em;
-    font-weight: bold;
+    font-size: clamp(1.2em, 4vw, 1.8em);
+    font-weight: 700;
     color: #0984e3;
-    margin-bottom: 20px;
+    margin-bottom: var(--spacing-md);
 }
 
 .celebration-emoji {
-    font-size: 3em;
+    font-size: clamp(2.5em, 8vw, 4em);
     animation: bounce 1s infinite;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
 
 @keyframes celebrationPop {
-    0% { transform: scale(0.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+    0% { 
+        transform: scale(0.5) rotate(-5deg); 
+        opacity: 0; 
+    }
+    50% {
+        transform: scale(1.05) rotate(2deg);
+    }
+    100% { 
+        transform: scale(1) rotate(0deg); 
+        opacity: 1; 
+    }
 }
 
 @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-10px); }
-    60% { transform: translateY(-5px); }
+    0%, 20%, 50%, 80%, 100% { 
+        transform: translateY(0) scale(1); 
+    }
+    40% { 
+        transform: translateY(-15px) scale(1.1); 
+    }
+    60% { 
+        transform: translateY(-8px) scale(1.05); 
+    }
 }
 
-@media (max-width: 600px) {
-    .container { padding: 10px; }
-    h1 { font-size: 2em; }
-    .level-info { flex-direction: column; }
-    .exp-bar { width: 100%; }
-    .quick-actions { grid-template-columns: 1fr; }
+/* 動畫效果 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes slideUp {
+    from { 
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to { 
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes levelUp {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+    25% {
+        transform: scale(1.2) rotate(-5deg);
+    }
+    50% {
+        transform: scale(1.3) rotate(5deg);
+    }
+    75% {
+        transform: scale(1.2) rotate(-3deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes progressPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(9, 132, 227, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(9, 132, 227, 0);
+    }
+}
+
+@keyframes achievementUnlock {
+    0% {
+        transform: scale(0.5) rotate(-180deg);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.1) rotate(10deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+/* 頁面載入動畫 */
+.container {
+    animation: fadeIn 0.5s ease;
+}
+
+header {
+    animation: slideUp 0.6s ease;
+}
+
+.character-section {
+    animation: scaleIn 0.7s ease 0.1s both;
+}
+
+.stats-section {
+    animation: slideInFromLeft 0.7s ease 0.2s both;
+}
+
+.achievements {
+    animation: slideInFromRight 0.7s ease 0.3s both;
+}
+
+.history {
+    animation: slideInFromLeft 0.7s ease 0.4s both;
+}
+
+/* 等級提升動畫 - 增強版 */
+.level-up-animation {
+    animation: levelUp 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55), levelUpGlow 1s ease-out;
+}
+
+@keyframes levelUpGlow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(253, 203, 110, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 30px 15px rgba(253, 203, 110, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(253, 203, 110, 0);
+    }
+}
+
+/* 進度條動畫 - 增強版 */
+.progress-fill.goal-reached {
+    animation: progressPulse 1.5s ease-in-out, progressGlow 2s ease-in-out infinite;
+}
+
+@keyframes progressGlow {
+    0%, 100% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.2);
+    }
+}
+
+/* 成就解鎖動畫 */
+.achievement-item.newly-unlocked {
+    animation: achievementUnlock 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* 水量添加動畫 */
+@keyframes waterDrop {
+    0% {
+        transform: translateY(-20px) scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        transform: translateY(0) scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.water-added-animation {
+    animation: waterDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 按鈕點擊動畫 */
+@keyframes buttonPress {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.95);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.button-pressed {
+    animation: buttonPress 0.3s ease;
+}
+
+/* 進度條填充動畫 */
+@keyframes progressFill {
+    from {
+        width: 0%;
+    }
+}
+
+.progress-fill-animated {
+    animation: progressFill 0.8s ease-out;
+}
+
+/* 經驗值增加動畫 */
+@keyframes expGain {
+    0% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    50% {
+        transform: scale(1.05);
+        filter: brightness(1.3);
+    }
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+}
+
+.exp-gain-animation {
+    animation: expGain 0.5s ease;
+}
+
+/* 角色進化動畫 - 增強版 */
+@keyframes characterEvolve {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+        filter: brightness(1);
+    }
+    25% {
+        transform: scale(0.8) rotate(-10deg);
+        opacity: 0.7;
+        filter: brightness(0.8);
+    }
+    50% {
+        transform: scale(1.3) rotate(10deg);
+        opacity: 0.9;
+        filter: brightness(1.5);
+    }
+    75% {
+        transform: scale(0.9) rotate(-5deg);
+        opacity: 1;
+        filter: brightness(1.2);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+        filter: brightness(1);
+    }
+}
+
+.character-evolve-animation {
+    animation: characterEvolve 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55), evolveGlow 1.5s ease-out;
+}
+
+@keyframes evolveGlow {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(9, 132, 227, 0);
+    }
+    50% {
+        box-shadow: 0 0 40px 20px rgba(9, 132, 227, 0.6);
+    }
+}
+
+/* 成就彈出動畫 */
+@keyframes achievementPop {
+    0% {
+        transform: translateX(-100%) scale(0.5);
+        opacity: 0;
+    }
+    60% {
+        transform: translateX(10px) scale(1.05);
+        opacity: 1;
+    }
+    80% {
+        transform: translateX(-5px) scale(0.98);
+    }
+    100% {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.achievement-pop-animation {
+    animation: achievementPop 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* 歷史記錄添加動畫 */
+@keyframes historyItemAdd {
+    0% {
+        transform: translateY(-20px);
+        opacity: 0;
+        max-height: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+        max-height: 100px;
+    }
+}
+
+.history-item-add-animation {
+    animation: historyItemAdd 0.5s ease-out;
+}
+
+/* 刪除動畫 */
+@keyframes itemRemove {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+        max-height: 100px;
+    }
+    50% {
+        transform: translateX(20px);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
+        max-height: 0;
+    }
+}
+
+.item-remove-animation {
+    animation: itemRemove 0.4s ease-out forwards;
+}
+
+/* 閃爍提示動畫 */
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.blink-animation {
+    animation: blink 1s ease-in-out 3;
+}
+
+/* 搖晃動畫（用於錯誤提示） */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+.shake-animation {
+    animation: shake 0.5s ease;
+}
+
+/* 脈衝動畫 */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+}
+
+.pulse-animation {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* 旋轉載入動畫 */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spin-animation {
+    animation: spin 1s linear infinite;
+}
+
+/* 淡入淡出動畫 */
+@keyframes fadeInOut {
+    0%, 100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.fade-in-out-animation {
+    animation: fadeInOut 2s ease-in-out;
+}
+
+/* 新手導覽高亮效果 */
+.onboarding-highlight {
+    position: relative;
+    z-index: 9997;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.6), 0 0 0 8px rgba(102, 126, 234, 0.3) !important;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.6), 0 0 0 8px rgba(102, 126, 234, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(102, 126, 234, 0.8), 0 0 0 12px rgba(102, 126, 234, 0.4);
+    }
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .container { 
+        padding: var(--spacing-sm); 
+    }
+    
+    header {
+        padding: var(--spacing-md);
+    }
+    
+    .level-info { 
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .exp-bar { 
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --spacing-lg: 20px;
+        --spacing-md: 16px;
+    }
+    
+    .character-section,
+    .stats-section,
+    .achievements,
+    .history {
+        padding: var(--spacing-md);
+    }
+    
+    .drink-btn {
+        min-height: 90px;
+    }
+    
+    .drink-btn .icon {
+        font-size: 2em;
+    }
+}
+
+@media (min-width: 769px) {
+    main {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    }
+    
+    .character-section {
+        grid-column: 1 / -1;
+    }
+    
+    .stats-section {
+        grid-column: 1 / -1;
+    }
+}
+
+/* 觸控裝置優化 */
+@media (hover: none) and (pointer: coarse) {
+    .drink-btn,
+    .help-btn,
+    .settings-btn,
+    .dashboard-btn,
+    .export-btn,
+    .custom-amount button {
+        min-height: 48px;
+        min-width: 48px;
+    }
+    
+    .achievement-item,
+    .history-item {
+        min-height: 64px;
+    }
+}
+
+/* 高對比度模式支援 */
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: #000;
+    }
+    
+    body.dark-theme {
+        --border-color: #fff;
+    }
+    
+    .drink-btn,
+    .help-btn,
+    .settings-btn,
+    .dashboard-btn,
+    .export-btn {
+        border: 2px solid currentColor;
+    }
+}
+
+/* 減少動畫偏好 */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ==================== 增強的無障礙功能 ==================== */
+
+/* 跳過導航連結增強 */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #0984e3;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 0 0 8px 0;
+    z-index: 100;
+    transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+    top: 0;
+    outline: 3px solid #fdcb6e;
+    outline-offset: 2px;
+}
+
+/* 鍵盤導航增強 - 可見焦點指示器 */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 3px solid #0984e3;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px rgba(9, 132, 227, 0.2);
+    transition: box-shadow 0.2s ease, outline-offset 0.2s ease;
+}
+
+/* 互動元素的焦點動畫 */
+.drink-btn:focus-visible,
+.help-btn:focus-visible,
+.settings-btn:focus-visible,
+.dashboard-btn:focus-visible,
+.export-btn:focus-visible {
+    animation: focusPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes focusPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(9, 132, 227, 0.2);
+    }
+}
+
+/* 高對比度焦點樣式 */
+@media (prefers-contrast: high) {
+    *:focus-visible {
+        outline: 4px solid currentColor;
+        outline-offset: 4px;
+    }
+}
+
+/* 觸控目標尺寸確保 */
+@media (hover: none) and (pointer: coarse) {
+    button,
+    a,
+    input[type="button"],
+    input[type="submit"],
+    [role="button"],
+    [tabindex="0"] {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 12px;
+    }
+}
+
+/* ARIA live region 樣式 */
+[aria-live="polite"],
+[aria-live="assertive"] {
+    position: relative;
+}
+
+/* 狀態變化動畫 */
+[aria-busy="true"] {
+    opacity: 0.6;
+    pointer-events: none;
+    animation: busyPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes busyPulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* 錯誤狀態樣式 */
+[aria-invalid="true"] {
+    border-color: #d63031 !important;
+    animation: errorShake 0.5s ease;
+}
+
+@keyframes errorShake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+/* 成功狀態動畫 */
+.success-feedback {
+    animation: successBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes successBounce {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* 載入狀態動畫 */
+.loading-indicator {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 工具提示增強 */
+[title]:hover::after,
+[aria-label]:hover::after {
+    content: attr(title) attr(aria-label);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+    animation: tooltipFadeIn 0.2s ease;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* 鍵盤導航提示 */
+.keyboard-hint {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    color: #666;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+*:focus-visible .keyboard-hint {
+    opacity: 1;
+}
+
+/* 平滑滾動行為 */
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* 選擇文字樣式 */
+::selection {
+    background: rgba(9, 132, 227, 0.3);
+    color: inherit;
+}
+
+::-moz-selection {
+    background: rgba(9, 132, 227, 0.3);
+    color: inherit;
+}
+
+/* 深色主題選擇樣式 */
+body.dark-theme ::selection {
+    background: rgba(116, 185, 255, 0.3);
+}
+
+body.dark-theme ::-moz-selection {
+    background: rgba(116, 185, 255, 0.3);
+}
+
+/* 互動元素的 hover 和 active 狀態增強 */
+button,
+a,
+[role="button"] {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+button::before,
+a::before,
+[role="button"]::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+button:active::before,
+a:active::before,
+[role="button"]:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* 禁用狀態樣式 */
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled,
+[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* 表單驗證反饋動畫 */
+.validation-message {
+    animation: slideInFromTop 0.3s ease-out;
+    color: #d63031;
+    font-size: 0.85em;
+    margin-top: 4px;
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 通知訊息動畫 */
+.notification-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    animation: toastSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.notification-toast.hiding {
+    animation: toastSlideOut 0.3s ease-in forwards;
+}
+
+@keyframes toastSlideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* 模態對話框動畫增強 */
+.modal-overlay {
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    animation: modalSlideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes modalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 列表項目交錯動畫 */
+.stagger-animation > * {
+    animation: staggerFadeIn 0.5s ease-out backwards;
+}
+
+.stagger-animation > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-animation > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-animation > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-animation > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-animation > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-animation > *:nth-child(n+6) { animation-delay: 0.3s; }
+
+@keyframes staggerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 卡片翻轉動畫 */
+.card-flip {
+    animation: cardFlip 0.6s ease-in-out;
+}
+
+@keyframes cardFlip {
+    0% {
+        transform: rotateY(0deg);
+    }
+    50% {
+        transform: rotateY(90deg);
+    }
+    100% {
+        transform: rotateY(0deg);
+    }
+}
+
+/* 數字計數動畫 */
+.number-count-up {
+    animation: numberPulse 0.5s ease-out;
+}
+
+@keyframes numberPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+        color: #0984e3;
+    }
+    100% {
+        transform: scale(1);
+    }
 }
