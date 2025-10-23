@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水精靈養成記 💧</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💧 水精靈養成記 💧</h1>
+            <div class="level-info">
+                <span class="level">Lv.<span id="level">1</span></span>
+                <div class="exp-bar">
+                    <div class="exp-fill" id="expFill"></div>
+                    <span class="exp-text"><span id="currentExp">0</span>/<span id="maxExp">100</span> EXP</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="character-section">
+                <div class="character" id="character">
+                    <div class="water-sprite sprite-level-1">🌱</div>
+                    <div class="character-name">小水滴</div>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <div class="daily-goal">
+                    <h3>今日目標: 2000ml</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="dailyProgress"></div>
+                        <span class="progress-text"><span id="todayAmount">0</span>ml / 2000ml</span>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="drink-btn" onclick="addWater(250)">
+                        <span class="icon">🥤</span>
+                        <span>一杯水<br>250ml</span>
+                    </button>
+                    <button class="drink-btn" onclick="addWater(500)">
+                        <span class="icon">🍶</span>
+                        <span>水瓶<br>500ml</span>
+                    </button>
+                    <button class="drink-btn" onclick="addWater(100)">
+                        <span class="icon">☕</span>
+                        <span>小口<br>100ml</span>
+                    </button>
+                </div>
+
+                <div class="custom-amount">
+                    <input type="number" id="customAmount" placeholder="自訂毫升數" min="1" max="1000">
+                    <button onclick="addCustomWater()">添加</button>
+                </div>
+            </div>
+
+            <div class="achievements">
+                <h3>🏆 成就系統</h3>
+                <div class="achievement-list" id="achievementList">
+                    <!-- 成就會動態生成 -->
+                </div>
+            </div>
+
+            <div class="history">
+                <h3>📊 今日記錄</h3>
+                <div class="history-list" id="historyList">
+                    <!-- 記錄會動態生成 -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <div class="celebration-content">
+            <div class="celebration-text" id="celebrationText"></div>
+            <div class="celebration-emoji">🎉</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
