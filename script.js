@@ -4440,6 +4440,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (useCustomTimeCheckbox && customTimeContainer && customTimeInput) {
         useCustomTimeCheckbox.addEventListener('change', function() {
             if (this.checked) {
+                customTimeContainer.classList.add('show');
                 customTimeContainer.style.display = 'block';
                 // 設定最大時間為當前時間
                 const now = new Date();
@@ -4448,7 +4449,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 預設為當前時間
                 customTimeInput.value = maxTime;
             } else {
-                customTimeContainer.style.display = 'none';
+                customTimeContainer.classList.remove('show');
+                setTimeout(() => {
+                    customTimeContainer.style.display = 'none';
+                }, 300); // 等待動畫完成
                 customTimeInput.value = '';
             }
         });

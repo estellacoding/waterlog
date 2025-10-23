@@ -73,23 +73,42 @@
                     </button>
                 </div>
 
-                <div class="custom-amount" role="group" aria-label="自訂水量輸入">
-                    <label for="customAmount" class="sr-only">自訂毫升數（1到1000毫升）</label>
-                    <input type="number" id="customAmount" placeholder="自訂毫升數" min="1" max="1000" aria-describedby="custom-amount-hint">
-                    <button onclick="addCustomWater()" aria-label="添加自訂水量">添加</button>
-                    <span id="custom-amount-hint" class="sr-only">請輸入1到1000之間的毫升數</span>
-                </div>
-                
-                <div class="time-selection" style="margin-top: 15px; text-align: center;">
-                    <label style="display: flex; align-items: center; justify-content: center; gap: 8px; color: #666; font-size: 0.9em; cursor: pointer;">
-                        <input type="checkbox" id="useCustomTime" style="cursor: pointer;" aria-describedby="custom-time-desc">
-                        <span>自訂時間</span>
-                    </label>
-                    <span id="custom-time-desc" class="sr-only">勾選以自訂記錄時間</span>
-                    <div id="customTimeContainer" style="display: none; margin-top: 10px;">
-                        <label for="customTime" class="sr-only">選擇記錄時間</label>
-                        <input type="time" id="customTime" style="padding: 8px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em;" aria-describedby="custom-time-hint">
-                        <p id="custom-time-hint" style="margin: 4px 0 0 0; color: #999; font-size: 0.85em;">只能選擇今天的時間</p>
+                <div class="custom-input-section" role="group" aria-label="自訂水量與時間輸入">
+                    <div class="custom-input-card">
+                        <div class="custom-input-header">
+                            <span class="custom-input-icon" aria-hidden="true">⚙️</span>
+                            <h4>自訂記錄</h4>
+                        </div>
+                        
+                        <div class="custom-input-body">
+                            <div class="input-group">
+                                <label for="customAmount" class="input-label">
+                                    <span class="label-icon" aria-hidden="true">💧</span>
+                                    <span>水量（毫升）</span>
+                                </label>
+                                <input type="number" id="customAmount" placeholder="輸入 1-1000" min="1" max="1000" aria-describedby="custom-amount-hint">
+                                <span id="custom-amount-hint" class="sr-only">請輸入1到1000之間的毫升數</span>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="useCustomTime" class="input-label checkbox-label">
+                                    <input type="checkbox" id="useCustomTime" aria-describedby="custom-time-desc">
+                                    <span class="label-icon" aria-hidden="true">🕐</span>
+                                    <span>自訂時間</span>
+                                </label>
+                                <span id="custom-time-desc" class="sr-only">勾選以自訂記錄時間</span>
+                                
+                                <div id="customTimeContainer" class="time-input-container">
+                                    <input type="time" id="customTime" aria-describedby="custom-time-hint">
+                                    <p id="custom-time-hint" class="input-hint">只能選擇今天的時間</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="custom-submit-btn" onclick="addCustomWater()" aria-label="添加自訂水量記錄">
+                            <span class="btn-icon" aria-hidden="true">✓</span>
+                            <span>確認添加</span>
+                        </button>
                     </div>
                 </div>
             </section>

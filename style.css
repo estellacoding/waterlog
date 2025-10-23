@@ -467,97 +467,103 @@ main {
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
-.custom-amount {
-    display: flex;
-    gap: var(--spacing-sm);
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
+/* 自訂輸入區塊 - 重新設計 */
+.custom-input-section {
+    margin-top: var(--spacing-lg);
 }
 
-.custom-amount input {
-    padding: 12px 16px;
+.custom-input-card {
+    background: linear-gradient(135deg, rgba(116, 185, 255, 0.1), rgba(9, 132, 227, 0.05));
     border: 2px solid var(--border-color);
-    border-radius: var(--border-radius-md);
-    font-size: 1em;
-    width: 160px;
-    background: var(--input-bg);
-    color: var(--text-primary);
-    transition: all var(--transition-fast);
-    box-shadow: var(--card-shadow-sm);
-    min-height: 44px;
-}
-
-.custom-amount input:focus {
-    outline: none;
-    border-color: #0984e3;
-    box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.1);
-}
-
-.custom-amount button {
-    background: linear-gradient(135deg, #e17055, #d63031);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: var(--border-radius-md);
-    cursor: pointer;
-    font-weight: 600;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-lg);
     transition: all var(--transition-normal);
-    box-shadow: var(--card-shadow-sm);
-    min-height: 44px;
-    min-width: 44px;
 }
 
-.custom-amount button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(225, 112, 85, 0.4);
+body.dark-theme .custom-input-card {
+    background: linear-gradient(135deg, rgba(116, 185, 255, 0.05), rgba(9, 132, 227, 0.02));
 }
 
-.custom-amount button:active {
-    transform: translateY(0);
+.custom-input-card:hover {
+    border-color: #74b9ff;
+    box-shadow: 0 4px 20px rgba(116, 185, 255, 0.15);
 }
 
-.custom-amount button:focus {
-    outline: 3px solid #e17055;
-    outline-offset: 2px;
-}
-
-.time-selection {
-    margin-top: var(--spacing-md);
-    text-align: center;
-}
-
-.time-selection label {
+.custom-input-header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.custom-input-icon {
+    font-size: 1.5em;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.custom-input-header h4 {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #0984e3;
+}
+
+body.dark-theme .custom-input-header h4 {
+    color: #74b9ff;
+}
+
+.custom-input-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
     gap: var(--spacing-xs);
-    color: var(--text-secondary);
+}
+
+.input-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
     font-size: 0.95em;
-    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-secondary);
     transition: color var(--transition-fast);
+}
+
+.input-label .label-icon {
+    font-size: 1.2em;
+}
+
+.checkbox-label {
+    cursor: pointer;
     padding: var(--spacing-xs);
     border-radius: var(--border-radius-sm);
+    transition: all var(--transition-fast);
 }
 
-.time-selection label:hover {
+.checkbox-label:hover {
+    background: rgba(9, 132, 227, 0.05);
     color: var(--text-primary);
-    background: rgba(0, 0, 0, 0.02);
 }
 
-body.dark-theme .time-selection label:hover {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.time-selection input[type="checkbox"] {
+.checkbox-label input[type="checkbox"] {
     width: 20px;
     height: 20px;
     cursor: pointer;
     accent-color: #0984e3;
+    margin: 0;
 }
 
-.time-selection input[type="time"] {
-    padding: 10px 14px;
+.input-group input[type="number"],
+.input-group input[type="time"] {
+    padding: 12px 16px;
     border: 2px solid var(--border-color);
     border-radius: var(--border-radius-md);
     font-size: 1em;
@@ -568,10 +574,99 @@ body.dark-theme .time-selection label:hover {
     min-height: 44px;
 }
 
-.time-selection input[type="time"]:focus {
+.input-group input[type="number"]:focus,
+.input-group input[type="time"]:focus {
     outline: none;
     border-color: #0984e3;
-    box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.1);
+    box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.15);
+    transform: translateY(-1px);
+}
+
+.input-group input[type="number"]:hover,
+.input-group input[type="time"]:hover {
+    border-color: #74b9ff;
+}
+
+.time-input-container {
+    display: none;
+    margin-top: var(--spacing-xs);
+    animation: slideDown 0.3s ease-out;
+}
+
+.time-input-container.show {
+    display: block;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 200px;
+    }
+}
+
+.input-hint {
+    margin: 4px 0 0 0;
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    font-style: italic;
+}
+
+.custom-submit-btn {
+    background: linear-gradient(135deg, #00b894, #00cec9);
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1em;
+    transition: all var(--transition-normal);
+    box-shadow: var(--card-shadow-sm);
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    width: 100%;
+}
+
+.custom-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 184, 148, 0.4);
+    background: linear-gradient(135deg, #00cec9, #00b894);
+}
+
+.custom-submit-btn:active {
+    transform: translateY(0);
+}
+
+.custom-submit-btn:focus {
+    outline: 3px solid #00b894;
+    outline-offset: 2px;
+}
+
+.custom-submit-btn .btn-icon {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+/* 響應式設計 */
+@media (min-width: 768px) {
+    .custom-input-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .custom-submit-btn {
+        grid-column: 1 / -1;
+    }
 }
 
 .achievements, .history {
